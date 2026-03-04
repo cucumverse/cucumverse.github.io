@@ -10,12 +10,12 @@
     :root {
       --bg: #060d0a;
       --surface: #0a1510;
-      --border: #143520;
+      --border: #1e4a2e;
       --accent: #4cde7e;
-      --accent2: #a8f0c0;
+      --accent2: #ffffff;
       --accent3: #7b61ff;
-      --text: #dff5e8;
-      --muted: #4a7060;
+      --text: #ffffff;
+      --muted: #e8e8e8;
       --mono: 'Space Mono', monospace;
       --sans: 'Outfit', sans-serif;
     }
@@ -151,13 +151,13 @@
     .benefit-box { background:var(--surface); border:1px solid var(--border); padding:1rem 1.2rem; font-size:0.85rem; color:var(--accent2); font-style:italic; margin-bottom:1.5rem; }
 
     /* HOW IT WORKS */
-    .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-top:0; }
-    .step-card { background:var(--bg); padding:2rem; transition:background 0.25s; position:relative; }
-    .step-card:hover { background:var(--surface); }
-    .step-num { font-family:var(--mono); font-size:2.5rem; font-weight:700; color:var(--border); line-height:1; margin-bottom:0.8rem; }
-    .step-card h3 { font-size:0.95rem; font-weight:700; color:var(--accent2); margin-bottom:0.5rem; }
-    .step-card p { font-size:0.85rem; color:var(--muted); line-height:1.7; }
-    .step-tip { margin-top:0.6rem; font-family:var(--mono); font-size:0.72rem; color:var(--accent3); }
+    .steps-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:#c8e6c9; border:2px solid #c8e6c9; margin-top:0; border-radius:8px; overflow:hidden; }
+    .step-card { background:#f4fdf6; padding:2rem; transition:background 0.25s; position:relative; }
+    .step-card:hover { background:#e8f8ed; }
+    .step-num { font-family:var(--mono); font-size:2.5rem; font-weight:700; color:#a0d4b0; line-height:1; margin-bottom:0.8rem; }
+    .step-card h3 { font-size:0.95rem; font-weight:700; color:#1a3d28; margin-bottom:0.5rem; }
+    .step-card p { font-size:0.85rem; color:#2d5a3d; line-height:1.7; }
+    .step-tip { margin-top:0.6rem; font-family:var(--mono); font-size:0.72rem; color:#2a7a4b; }
 
     /* IDEAL FOR */
     .ideal-section { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
@@ -225,7 +225,7 @@
     <li><a href="#howto">How It Works</a></li>
     <li><a href="#community">Community</a></li>
   </ul>
-  <a href="https://t.me/ApexSol_bot" class="btn btn-green">Launch on Telegram</a>
+  <a href="#" class="btn btn-green">Launch on Telegram</a>
 </nav>
 
 <!-- HERO -->
@@ -235,17 +235,17 @@
   <div class="hero-left">
     <div class="hero-badge"><div class="dot"></div> Pump.fun Multi-Wallet Trading Assistant</div>
     <h1>Trade the <span class="green">Verse</span><br/>the <span class="violet">Cucumber</span> Way</h1>
-    <p class="hero-sub">Manage multiple wallets, automate trades, and execute advanced strategies on Pump.fun — all from a single Telegram bot. Built for traders who move fast.</p>
+    <p class="hero-sub">Control multiple wallets, fire bulk trades across all of them in a single execution, and run advanced strategies on Pump.fun — all from one Telegram bot. Built for traders who need speed, scale, and precision.</p>
     <div class="hero-btns">
-      <a href="https://t.me/ApexSol_bot" class="btn btn-green">Start on Telegram</a>
+      <a href="#" class="btn btn-green">Start on Telegram</a>
       <a href="#howto" class="btn btn-outline">See How It Works</a>
     </div>
     <div class="hero-tags">
       <span class="hero-tag">Solana</span>
       <span class="hero-tag">Pump.fun</span>
       <span class="hero-tag">Multi-Wallet</span>
-      <span class="hero-tag">Sniper Mode</span>
-      <span class="hero-tag">Auto Sell</span>
+      <span class="hero-tag">Bulk Execution</span>
+      <span class="hero-tag">Volume Maker</span>
     </div>
   </div>
   <div class="hero-right">
@@ -277,37 +277,37 @@
 <section id="features">
   <div class="section-tag">Key Features</div>
   <h2 class="section-title">Everything in One Bot</h2>
-  <p class="section-sub">Cucumverse packs powerful trading tools into a single Telegram bot — no coding, no complex setup, just results.</p>
+  <p class="section-sub">Cucumverse puts full multi-wallet control and bulk trade execution inside a single Telegram bot — one command fires trades across every wallet simultaneously. No coding, no complex setup, just results.</p>
   <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon">👛</div>
-      <h3>Multi-Wallet Management</h3>
-      <p>Connect and manage multiple wallets simultaneously. Assign roles — main, buyer, or distribution — and automate fund allocation across all of them.</p>
+      <h3>Multi-Wallet Control</h3>
+      <p>Connect and operate multiple wallets simultaneously. Assign roles — main, buyer, or distribution — and automate fund allocation across all wallets at once. Every wallet moves together, not one at a time.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">⚙️</div>
-      <h3>Advanced Trade Configuration</h3>
-      <p>Customizable buy/sell limits, slippage control, gas fee optimization, and adjustable trade sizing per wallet for precise execution.</p>
+      <h3>Per-Wallet Trade Configuration</h3>
+      <p>Configure buy/sell amounts, slippage tolerance, gas fees, and trade sizing individually per wallet — so when you fire a bulk execution, each wallet trades exactly how you set it up.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">📈</div>
-      <h3>Volume Pumping Strategy</h3>
-      <p>Coordinate buy activity across wallets with configurable intervals and simulated organic volume patterns to avoid predictable behavior.</p>
+      <h3>Coordinated Volume Strategy</h3>
+      <p>Trigger buy activity across all your wallets at the same time with configurable timing and intervals — creating organic-looking volume patterns through coordinated, simultaneous multi-wallet execution.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">🎯</div>
-      <h3>Stealth Sniper Mode</h3>
-      <p>Rapid entry on newly launched Pump.fun tokens. Auto-detect launches, priority transaction execution, and anti-front-run logic built in.</p>
+      <h3>Pump.fun Volume Maker</h3>
+      <p>Enter newly launched Pump.fun tokens at full speed. Priority transaction execution positions all your wallets simultaneously — bulk buying across the board before the crowd even moves.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">💰</div>
-      <h3>Instant Auto-Sell System</h3>
-      <p>Take-profit automation, stop-loss protection, trailing sell logic, and emergency dump across all wallets — fully automated.</p>
+      <h3>Bulk Fund Distribution</h3>
+      <p>Fund all your wallets in one action. Distribute SOL from your main wallet to every buyer wallet simultaneously — no manual transfers, no repetition. All wallets funded and ready to trade in seconds.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">⚡</div>
-      <h3>Batch Execution</h3>
-      <p>Execute coordinated trades across all wallets in one operation. Buy or sell simultaneously without repetitive manual effort.</p>
+      <h3>Bulk Buy & Sell Execution</h3>
+      <p>One command. Every wallet trades at once. Bulk buy or bulk sell across all wallets in a single execution — multiple trades fire simultaneously with no repetition, no delays, and no manual effort.</p>
     </div>
   </div>
 </section>
@@ -322,25 +322,25 @@
       <div class="usecase-label">For Token Creators</div>
       <h3>Shape Your Market</h3>
       <ul class="usecase-list">
-        <li>Simulate realistic transaction volume instantly</li>
-        <li>Execute coordinated buys & sells across wallets</li>
-        <li>Control timing, intervals & trade sizes strategically</li>
-        <li>Manage all wallets from a single dashboard</li>
+        <li>Simulate realistic transaction volume across multiple wallets instantly</li>
+        <li>Execute bulk buys and coordinated sells in one command</li>
+        <li>Control timing, intervals, and trade sizes across all wallets at once</li>
+        <li>Distribute funds and manage all wallets from a single dashboard</li>
       </ul>
-      <div class="benefit-box">Drive initial activity, boost credibility, and manage market perception — all in one go.</div>
-      <a href="https://t.me/ApexSol_bot" class="btn btn-green">Get Started</a>
+      <div class="benefit-box">Bulk buy across multiple wallets simultaneously, drive initial volume, boost token visibility, and shape market perception — all in a single execution.</div>
+      <a href="#" class="btn btn-green">Get Started</a>
     </div>
     <div class="usecase-card violet">
       <div class="usecase-label">For Token Buyers / Traders</div>
       <h3>Execute With Precision</h3>
       <ul class="usecase-list">
-        <li>Batch buy or sell across multiple wallets at once</li>
-        <li>Set custom limits, slippage & gas per wallet</li>
-        <li>Rapid entry on newly launched tokens</li>
-        <li>Automated take-profit, stop-loss & emergency dump</li>
+        <li>Bulk buy or sell across multiple wallets in a single execution</li>
+        <li>Set custom slippage, limits, and gas fees per wallet</li>
+        <li>Enter newly launched tokens across all wallets simultaneously</li>
+        <li>Distribute and manage funds across your entire wallet portfolio</li>
       </ul>
-      <div class="benefit-box">Maximize opportunities, manage multiple holdings, and execute complex strategies with ease.</div>
-      <a href="https://t.me/ApexSol_bot" class="btn btn-violet">Start Trading</a>
+      <div class="benefit-box">Manage multiple wallets, execute bulk trades across all of them in one go, and run complex multi-wallet strategies with full precision and control.</div>
+      <a href="#" class="btn btn-violet">Start Trading</a>
     </div>
   </div>
 </section>
@@ -354,7 +354,7 @@
     <div class="step-card">
       <div class="step-num">01</div>
       <h3>Open Telegram</h3>
-      <p>s the Telegram app on your phone or desktop and search for the Cucumverse bot.</p>
+      <p>Launch the Telegram app on your phone or desktop and search for the Cucumverse bot.</p>
     </div>
     <div class="step-card">
       <div class="step-num">02</div>
@@ -380,7 +380,7 @@
     <div class="step-card">
       <div class="step-num">06</div>
       <h3>Paste & Trade</h3>
-      <p>Enter the Solana token contract address and execute bulk buy/sell across all wallets instantly.</p>
+      <p>Paste the Solana token contract address and fire a bulk buy or sell across all your wallets instantly — one command, multiple trades executed simultaneously across every wallet at once.</p>
       <div class="step-tip">✅ Currently supports Solana tokens only.</div>
     </div>
   </div>
@@ -397,7 +397,7 @@
     </div>
     <div class="ideal-card">
       <div class="ideal-icon">🎯</div>
-      <p>Pump.fun launch snipers</p>
+      <p>Pump.fun volume makers</p>
     </div>
     <div class="ideal-card">
       <div class="ideal-icon">📊</div>
@@ -422,9 +422,9 @@
 <!-- CTA -->
 <section class="cta-section">
   <h2>Ready to Trade the<br/><span class="green">Cucum</span><span class="violet">verse</span>?</h2>
-  <p>Set up in minutes. No coding needed. Just open Telegram and start trading.</p>
+  <p>Set up in minutes. No coding needed. Control multiple wallets, execute bulk trades across all of them simultaneously, and run advanced strategies — all from Telegram.</p>
   <div class="cta-btns">
-    <a href="https://t.me/ApexSol_bot" class="btn btn-green" style="padding:1rem 2.5rem;font-size:0.9rem;">Launch on Telegram</a>
+    <a href="#" class="btn btn-green" style="padding:1rem 2.5rem;font-size:0.9rem;">Launch on Telegram</a>
     <a href="#howto" class="btn btn-outline" style="padding:1rem 2.5rem;font-size:0.9rem;">How It Works</a>
   </div>
 </section>
@@ -447,7 +447,7 @@
       <a href="#" class="community-link">Join TG Group →</a>
     </div>
     <div class="community-card">
-      <div class="icon">🐦</div>
+      <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="color:#fff"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
       <h4>Follow on X</h4>
       <p>Stay updated with market insights and the latest highlights.</p>
       <a href="#" class="community-link">Follow on X →</a>
