@@ -57,7 +57,7 @@
       position: relative; z-index: 1;
       min-height: 92vh; display: flex; align-items: center;
       justify-content: space-between;
-      padding: 6rem 5% 4rem; gap: 1rem; flex-wrap: wrap;
+      padding: 6rem 0 4rem; display: flex; align-items: center; flex-wrap: nowrap; width: 100%;
     }
     .hero-glow-green {
       position: absolute; width: 600px; height: 600px; border-radius: 50%;
@@ -69,8 +69,8 @@
       background: radial-gradient(circle, rgba(123,97,255,0.07) 0%, transparent 65%);
       top: 20%; right: 5%; pointer-events: none;
     }
-    .hero-left { flex: 1; min-width: 300px; max-width: 500px; }
-    .hero-right { flex: 1; min-width: 280px; display: flex; justify-content: center; align-items: center; }
+    .hero-left { flex: 1; min-width: 300px; padding-left: 6%; padding-right: 3%; }
+    .hero-right { flex: 1; min-width: 280px; display: flex; justify-content: center; align-items: center; padding-right: 6%; }
     .hero-right img {
       width: min(380px, 90vw);
       filter: drop-shadow(0 0 40px rgba(76,222,126,0.45));
@@ -91,7 +91,7 @@
     h1 { font-size: clamp(2.6rem,5.5vw,5rem); font-weight:800; line-height:1.06; letter-spacing:-0.03em; animation: fadeUp 0.5s 0.1s ease both; }
     h1 .green { color: var(--accent); }
     h1 .violet { color: var(--accent3); }
-    .hero-sub { margin-top:1.2rem; font-size:1rem; color:var(--muted); max-width:500px; line-height:1.8; animation: fadeUp 0.5s 0.2s ease both; }
+    .hero-sub { margin-top:1.2rem; font-size:1rem; color:var(--muted); max-width:600px; line-height:1.8; animation: fadeUp 0.5s 0.2s ease both; }
     .hero-btns { margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap; animation: fadeUp 0.5s 0.3s ease both; }
 
     .hero-tags { margin-top: 1.8rem; display:flex; flex-wrap:wrap; gap:0.5rem; animation: fadeUp 0.5s 0.4s ease both; }
@@ -200,7 +200,7 @@
       .features-grid,.steps-grid,.ideal-grid{grid-template-columns:repeat(2,1fr);}
       .usecases-grid,.community-grid{grid-template-columns:1fr;}
       .stats-bar{grid-template-columns:repeat(2,1fr);}
-      .hero{flex-direction:column; text-align:center; padding-top:7rem;}
+      .hero{flex-direction:column; text-align:center; padding-top:7rem;} .hero-left{padding-left:5%; padding-right:5%;} .hero-right{padding-right:5%;}
       .hero-btns,.hero-tags{justify-content:center;}
       nav ul{display:none;}
     }
@@ -225,7 +225,7 @@
     <li><a href="#howto">How It Works</a></li>
     <li><a href="#community">Community</a></li>
   </ul>
-  <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Launch on Telegram</a>
+  <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Launch Cucumverse</a>
 </nav>
 
 <!-- HERO -->
@@ -421,10 +421,13 @@
 
 <!-- CTA -->
 <section class="cta-section">
-  <h2>Ready to Trade the<br/><span class="green">Cucum</span><span class="violet">verse</span>?</h2>
+  <h2>Ready to trade on <span class="green">PumpFun</span><br/>with the <span class="green">Cucum</span><span class="violet">verse</span> Bot?</h2>
   <p>Set up in minutes. No coding needed. Control multiple wallets, execute bulk trades across all of them simultaneously, and run advanced strategies — all from Telegram.</p>
   <div class="cta-btns">
-    <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green" style="padding:1rem 2.5rem;font-size:0.9rem;">Launch on Telegram</a>
+    <a href="https://pump.fun/" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Find a token on PumpFun</a>
+    <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Launch Cucumverse</a>
+  </div>
+  <div class="cta-btns" style="margin-top:1rem;">
     <a href="#howto" class="btn btn-outline" style="padding:1rem 2.5rem;font-size:0.9rem;">How It Works</a>
   </div>
 </section>
