@@ -368,41 +368,71 @@
 </style>
 
 <script>
-  // Sample token data - Replace with actual API call to Pump.fun
-  const sampleTokens = [
-    { name: "PsyopAnime", ticker: "PSYOP", mc: "$6.71M", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=PSYOP", url: "https://pump.fun/coin/example1" },
-    { name: "Tung Sahur", ticker: "TUNG", mc: "$2.58M", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TUNG", url: "https://pump.fun/coin/example2" },
-    { name: "Kilroy", ticker: "KILROY", mc: "$779K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=KILROY", url: "https://pump.fun/coin/example3" },
-    { name: "White House", ticker: "WHITE", mc: "$687K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=WHITE", url: "https://pump.fun/coin/example4" },
-    { name: "Lobstar", ticker: "LOBSTAR", mc: "$4.50M", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=LOBSTAR", url: "https://pump.fun/coin/example5" },
-    { name: "Dog Doing", ticker: "DOG", mc: "$2.08M", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=DOG", url: "https://pump.fun/coin/example6" },
-    { name: "SeekEmployment", ticker: "SEEK", mc: "$3.8K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=SEEK", url: "https://pump.fun/coin/example7" },
-    { name: "Game Theory", ticker: "GAME", mc: "$4.7K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=GAME", url: "https://pump.fun/coin/example8" },
-    { name: "Stephen Hawking", ticker: "HAWK", mc: "$80.2K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=HAWK", url: "https://pump.fun/coin/example9" },
-    { name: "Wealthcoin", ticker: "WEALTH", mc: "$50.7K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=WEALTH", url: "https://pump.fun/coin/example10" },
-    { name: "AgentHub", ticker: "AGENT", mc: "$24.3K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=AGENT", url: "https://pump.fun/coin/example11" },
-    { name: "Kalika", ticker: "KALIKA", mc: "$8.8K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=KALIKA", url: "https://pump.fun/coin/example12" },
-    // Add more tokens for pagination
-    { name: "Toby Bucks", ticker: "TOBY", mc: "$4.8K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOBY", url: "https://pump.fun/coin/example13" },
-    { name: "Electric Sheep", ticker: "SHEEP", mc: "$22.2K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=SHEEP", url: "https://pump.fun/coin/example14" },
-    { name: "Komechan", ticker: "KOME", mc: "$57.1K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=KOME", url: "https://pump.fun/coin/example15" },
-    { name: "Longest", ticker: "LONG", mc: "$35.9K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=LONG", url: "https://pump.fun/coin/example16" },
-    { name: "OpenDream", ticker: "DREAM", mc: "$110.2K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=DREAM", url: "https://pump.fun/coin/example17" },
-    { name: "Praison", ticker: "PRAI", mc: "$10.8K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=PRAI", url: "https://pump.fun/coin/example18" },
-  ];
-
   let currentPage = 0;
   const tokensPerPage = 12;
+  let allTokens = [];
+
+  // Fetch real tokens from Pump.fun API
+  async function fetchTokens() {
+    try {
+      // Pump.fun API endpoint for trending/new tokens
+      const response = await fetch('https://frontend-api.pump.fun/coins?limit=100&sort=last_trade_timestamp&order=DESC');
+      const data = await response.json();
+      
+      allTokens = data.map(token => ({
+        name: token.name || 'Unknown',
+        ticker: token.symbol || 'N/A',
+        mc: formatMarketCap(token.market_cap || 0),
+        img: token.image_uri || 'https://via.placeholder.com/150/4cde7e/060d0a?text=' + (token.symbol || 'TOKEN'),
+        url: `https://pump.fun/coin/${token.mint}`
+      }));
+      
+      renderTokens();
+    } catch (error) {
+      console.error('Error fetching tokens:', error);
+      // Fallback to sample data if API fails
+      loadFallbackData();
+    }
+  }
+
+  function formatMarketCap(mc) {
+    if (mc >= 1000000) return `$${(mc / 1000000).toFixed(2)}M`;
+    if (mc >= 1000) return `$${(mc / 1000).toFixed(1)}K`;
+    return `$${mc.toFixed(0)}`;
+  }
+
+  function loadFallbackData() {
+    allTokens = [
+      { name: "Sample Token 1", ticker: "SAMP1", mc: "$1.5M", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 2", ticker: "SAMP2", mc: "$850K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 3", ticker: "SAMP3", mc: "$420K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 4", ticker: "SAMP4", mc: "$250K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 5", ticker: "SAMP5", mc: "$180K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 6", ticker: "SAMP6", mc: "$95K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 7", ticker: "SAMP7", mc: "$75K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 8", ticker: "SAMP8", mc: "$60K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 9", ticker: "SAMP9", mc: "$45K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 10", ticker: "SAMP10", mc: "$38K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 11", ticker: "SAMP11", mc: "$25K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOKEN", url: "https://pump.fun/" },
+      { name: "Sample Token 12", ticker: "SAMP12", mc: "$15K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TOKEN", url: "https://pump.fun/" },
+    ];
+    renderTokens();
+  }
 
   function renderTokens() {
     const grid = document.getElementById('tokenGrid');
     const start = currentPage * tokensPerPage;
     const end = start + tokensPerPage;
-    const tokensToShow = sampleTokens.slice(start, end);
+    const tokensToShow = allTokens.slice(start, end);
+    
+    if (tokensToShow.length === 0) {
+      grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--muted);">Loading tokens...</div>';
+      return;
+    }
     
     grid.innerHTML = tokensToShow.map(token => `
       <a href="${token.url}" target="_blank" class="token-card">
-        <img src="${token.img}" alt="${token.name}" class="token-img" />
+        <img src="${token.img}" alt="${token.name}" class="token-img" onerror="this.src='https://via.placeholder.com/150/4cde7e/060d0a?text=${token.ticker}'" />
         <div class="token-name">${token.name}</div>
         <div class="token-ticker">${token.ticker}</div>
         <div class="token-mc">MC: ${token.mc}</div>
@@ -418,18 +448,21 @@
   });
 
   document.getElementById('nextTokens').addEventListener('click', () => {
-    if ((currentPage + 1) * tokensPerPage < sampleTokens.length) {
+    if ((currentPage + 1) * tokensPerPage < allTokens.length) {
       currentPage++;
       renderTokens();
     }
   });
 
-  // Initial render
-  renderTokens();
+  // Initial fetch
+  fetchTokens();
   
-  // Auto-rotate every 10 seconds
+  // Refresh data every 30 seconds
+  setInterval(fetchTokens, 30000);
+  
+  // Auto-rotate pages every 10 seconds
   setInterval(() => {
-    if ((currentPage + 1) * tokensPerPage < sampleTokens.length) {
+    if ((currentPage + 1) * tokensPerPage < allTokens.length) {
       currentPage++;
     } else {
       currentPage = 0;
