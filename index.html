@@ -72,7 +72,7 @@
     .hero-left { flex: 1; min-width: 300px; padding-left: 6%; padding-right: 3%; }
     .hero-right { flex: 1; min-width: 280px; display: flex; justify-content: center; align-items: center; padding-right: 6%; }
     .hero-right img {
-      width: min(500px, 90vw);
+      width: min(650px, 90vw);
       height: auto;
       filter: drop-shadow(0 0 40px rgba(76,222,126,0.45));
       animation: float 4s ease-in-out infinite;
@@ -288,6 +288,156 @@
   </div>
 </div>
 
+<!-- TRENDING TOKENS SECTION -->
+<section style="padding: 4rem 5%; background: var(--bg);">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+      <div class="section-tag">Live From Pump.fun</div>
+      <h2 class="section-title">Trending Tokens</h2>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <button id="prevTokens" style="padding: 0.8rem 1.2rem; background: var(--surface); border: 1px solid var(--border); color: var(--accent); cursor: pointer; font-family: var(--mono); font-size: 0.9rem; transition: all 0.2s;">← Prev</button>
+      <button id="nextTokens" style="padding: 0.8rem 1.2rem; background: var(--surface); border: 1px solid var(--border); color: var(--accent); cursor: pointer; font-family: var(--mono); font-size: 0.9rem; transition: all 0.2s;">Next →</button>
+    </div>
+  </div>
+  
+  <div id="tokenGrid" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+    <!-- Tokens will be loaded here dynamically -->
+  </div>
+  
+  <div style="text-align: center;">
+    <a href="https://pump.fun/" target="_blank" style="font-family: var(--mono); font-size: 0.85rem; color: var(--accent); text-decoration: underline;">View all on Pump.fun →</a>
+  </div>
+</section>
+
+<style>
+  .token-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: block;
+  }
+  .token-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(76, 222, 126, 0.2);
+  }
+  .token-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    background: var(--bg);
+  }
+  .token-name {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .token-ticker {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .token-mc {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  
+  @media(max-width: 1200px) {
+    #tokenGrid { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media(max-width: 768px) {
+    #tokenGrid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media(max-width: 540px) {
+    #tokenGrid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<script>
+  // Sample token data - Replace with actual API call to Pump.fun
+  const sampleTokens = [
+    { name: "PsyopAnime", ticker: "PSYOP", mc: "$6.71M", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=PSYOP", url: "https://pump.fun/coin/example1" },
+    { name: "Tung Sahur", ticker: "TUNG", mc: "$2.58M", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=TUNG", url: "https://pump.fun/coin/example2" },
+    { name: "Kilroy", ticker: "KILROY", mc: "$779K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=KILROY", url: "https://pump.fun/coin/example3" },
+    { name: "White House", ticker: "WHITE", mc: "$687K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=WHITE", url: "https://pump.fun/coin/example4" },
+    { name: "Lobstar", ticker: "LOBSTAR", mc: "$4.50M", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=LOBSTAR", url: "https://pump.fun/coin/example5" },
+    { name: "Dog Doing", ticker: "DOG", mc: "$2.08M", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=DOG", url: "https://pump.fun/coin/example6" },
+    { name: "SeekEmployment", ticker: "SEEK", mc: "$3.8K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=SEEK", url: "https://pump.fun/coin/example7" },
+    { name: "Game Theory", ticker: "GAME", mc: "$4.7K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=GAME", url: "https://pump.fun/coin/example8" },
+    { name: "Stephen Hawking", ticker: "HAWK", mc: "$80.2K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=HAWK", url: "https://pump.fun/coin/example9" },
+    { name: "Wealthcoin", ticker: "WEALTH", mc: "$50.7K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=WEALTH", url: "https://pump.fun/coin/example10" },
+    { name: "AgentHub", ticker: "AGENT", mc: "$24.3K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=AGENT", url: "https://pump.fun/coin/example11" },
+    { name: "Kalika", ticker: "KALIKA", mc: "$8.8K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=KALIKA", url: "https://pump.fun/coin/example12" },
+    // Add more tokens for pagination
+    { name: "Toby Bucks", ticker: "TOBY", mc: "$4.8K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=TOBY", url: "https://pump.fun/coin/example13" },
+    { name: "Electric Sheep", ticker: "SHEEP", mc: "$22.2K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=SHEEP", url: "https://pump.fun/coin/example14" },
+    { name: "Komechan", ticker: "KOME", mc: "$57.1K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=KOME", url: "https://pump.fun/coin/example15" },
+    { name: "Longest", ticker: "LONG", mc: "$35.9K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=LONG", url: "https://pump.fun/coin/example16" },
+    { name: "OpenDream", ticker: "DREAM", mc: "$110.2K", img: "https://via.placeholder.com/150/4cde7e/060d0a?text=DREAM", url: "https://pump.fun/coin/example17" },
+    { name: "Praison", ticker: "PRAI", mc: "$10.8K", img: "https://via.placeholder.com/150/7b61ff/ffffff?text=PRAI", url: "https://pump.fun/coin/example18" },
+  ];
+
+  let currentPage = 0;
+  const tokensPerPage = 12;
+
+  function renderTokens() {
+    const grid = document.getElementById('tokenGrid');
+    const start = currentPage * tokensPerPage;
+    const end = start + tokensPerPage;
+    const tokensToShow = sampleTokens.slice(start, end);
+    
+    grid.innerHTML = tokensToShow.map(token => `
+      <a href="${token.url}" target="_blank" class="token-card">
+        <img src="${token.img}" alt="${token.name}" class="token-img" />
+        <div class="token-name">${token.name}</div>
+        <div class="token-ticker">${token.ticker}</div>
+        <div class="token-mc">MC: ${token.mc}</div>
+      </a>
+    `).join('');
+  }
+
+  document.getElementById('prevTokens').addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      renderTokens();
+    }
+  });
+
+  document.getElementById('nextTokens').addEventListener('click', () => {
+    if ((currentPage + 1) * tokensPerPage < sampleTokens.length) {
+      currentPage++;
+      renderTokens();
+    }
+  });
+
+  // Initial render
+  renderTokens();
+  
+  // Auto-rotate every 10 seconds
+  setInterval(() => {
+    if ((currentPage + 1) * tokensPerPage < sampleTokens.length) {
+      currentPage++;
+    } else {
+      currentPage = 0;
+    }
+    renderTokens();
+  }, 10000);
+</script>
+
 <!-- USE CASES -->
 <section id="usecases" class="usecases-section">
   <div class="section-tag">Use Cases</div>
@@ -401,6 +551,38 @@
 <div class="notice">
   <strong>🔜 Coming Soon:</strong> Support for <strong>BNB Chain</strong>, <strong>Ethereum</strong>, and <strong>Base</strong> wallets — expanding the verse beyond Solana.
 </div>
+
+<!-- SOCIAL MEDIA SECTION -->
+<section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3rem 5%; text-align: center;">
+  <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent2);">Join the Cucumverse Community</h3>
+  <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+    
+    <!-- X (Twitter) -->
+    <a href="https://x.com/cucumverse" target="_blank" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      <span style="font-size: 0.8rem; color: var(--muted); font-family: var(--mono);">X (Twitter)</span>
+    </a>
+    
+    <!-- Telegram Channel -->
+    <a href="https://t.me/cucumverse_bot" target="_blank" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+      </svg>
+      <span style="font-size: 0.8rem; color: var(--muted); font-family: var(--mono);">TG Channel</span>
+    </a>
+    
+    <!-- YouTube -->
+    <a href="https://www.youtube.com/@cucumverse" target="_blank" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+      <span style="font-size: 0.8rem; color: var(--muted); font-family: var(--mono);">YouTube</span>
+    </a>
+    
+  </div>
+</section>
 
 <!-- CTA -->
 <section class="cta-section">
