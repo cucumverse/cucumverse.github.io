@@ -399,7 +399,7 @@
         name: token.name || 'Unknown Token',
         ticker: token.symbol || 'N/A',
         mc: formatMarketCap(token.market_cap || token.marketCap || 0),
-        img: token.image_uri || token.image || 'https://via.placeholder.com/200/4cde7e/060d0a?text=' + encodeURIComponent(token.symbol || 'TOKEN'),
+        img: proxyImage(token.image_uri || token.image),
         url: `https://pump.fun/${token.mint || token.address || ''}`
       }));
       
@@ -438,6 +438,20 @@
       { name: "Rho Token", ticker: "RHO", mc: "$58.6M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=RHO", url: "https://pump.fun/" },
     ];
     renderTokens();
+  }
+
+  // Proxy image URLs to avoid CORS issues
+  function proxyImage(url) {
+    if (!url || url.includes('placeholder')) return url;
+    
+    // Try multiple image proxy services
+    const proxies = [
+      `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=200&h=200&fit=cover`,
+      `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=200&h=200&fit=cover`,
+      url // fallback to original
+    ];
+    
+    return proxies[0];
   }
 
   function renderTokens() {
