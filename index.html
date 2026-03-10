@@ -289,29 +289,14 @@
 </div>
 
 <!-- TRENDING TOKENS SECTION -->
-<section style="padding: 4rem 5%; background: var(--bg);">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <div>
-      <div class="section-tag">Live From Pump.fun</div>
-      <h2 class="section-title">Top Tokens</h2>
-      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem;">Market Cap: $50M - $100M</p>
-    </div>
-    <div style="display: flex; gap: 0.5rem;">
-      <button id="prevTokens" style="padding: 0.8rem 1.2rem; background: var(--surface); border: 1px solid var(--border); color: var(--accent); cursor: pointer; font-family: var(--mono); font-size: 0.9rem; transition: all 0.2s;">← Prev</button>
-      <button id="nextTokens" style="padding: 0.8rem 1.2rem; background: var(--surface); border: 1px solid var(--border); color: var(--accent); cursor: pointer; font-family: var(--mono); font-size: 0.9rem; transition: all 0.2s;">Next →</button>
-    </div>
+<section style="padding: 3rem 5%; background: var(--bg);">
+  <div style="margin-bottom: 1.5rem;">
+    <div class="section-tag">Live From Pump.fun</div>
+    <h2 class="section-title">Trending Tokens</h2>
   </div>
   
-  <div id="tokenGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 1.5rem;">
+  <div id="tokenGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
     <!-- 4 tokens will be displayed here -->
-  </div>
-  
-  <div style="text-align: center; margin-top: 1rem;">
-    <span id="pageIndicator" style="font-family: var(--mono); font-size: 0.8rem; color: var(--muted);">Page 1 of 4</span>
-  </div>
-  
-  <div style="text-align: center; margin-top: 1rem;">
-    <a href="https://pump.fun/" target="_blank" style="font-family: var(--mono); font-size: 0.85rem; color: var(--accent); text-decoration: underline;">View all on Pump.fun →</a>
   </div>
 </section>
 
@@ -319,31 +304,38 @@
   .token-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    padding: 1.5rem;
+    border-radius: 12px;
+    padding: 1rem;
     cursor: pointer;
     transition: all 0.3s;
     text-decoration: none;
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
   .token-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: var(--accent);
-    box-shadow: 0 4px 20px rgba(76, 222, 126, 0.2);
+    box-shadow: 0 4px 16px rgba(76, 222, 126, 0.15);
   }
   .token-img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
+    width: 60px;
+    height: 60px;
     border-radius: 8px;
-    margin-bottom: 1rem;
+    object-fit: cover;
     background: var(--bg);
+    flex-shrink: 0;
+  }
+  .token-info {
+    flex: 1;
+    min-width: 0;
   }
   .token-name {
-    font-family: var(--mono);
+    font-family: var(--sans);
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.25rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -352,7 +344,7 @@
     font-family: var(--mono);
     font-size: 0.75rem;
     color: var(--muted);
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.4rem;
   }
   .token-mc {
     font-family: var(--mono);
@@ -362,12 +354,9 @@
   }
   
   @media(max-width: 1200px) {
-    #tokenGrid { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media(max-width: 768px) {
     #tokenGrid { grid-template-columns: repeat(2, 1fr); }
   }
-  @media(max-width: 540px) {
+  @media(max-width: 768px) {
     #tokenGrid { grid-template-columns: 1fr; }
   }
 </style>
@@ -375,84 +364,122 @@
 <script>
   let currentPage = 0;
   const tokensPerPage = 4;
-  const totalTokens = 16;
-  let allTokens = [];
-
-  // Fetch tokens with market cap between $50M - $100M
-  async function fetchTokens() {
-    try {
-      // Fetch more tokens and filter by market cap
-      const response = await fetch('https://frontend-api-v3.pump.fun/coins/king-of-the-hill?limit=200&includeNsfw=false');
-      
-      if (!response.ok) throw new Error('API request failed');
-      
-      const data = await response.json();
-      
-      // Filter tokens: market cap between $50M and $100M
-      const filteredTokens = data.filter(token => {
-        const mc = token.market_cap || token.marketCap || 0;
-        return mc >= 50000000 && mc <= 100000000; // $50M to $100M
-      });
-      
-      // Take only first 16 tokens
-      allTokens = filteredTokens.slice(0, totalTokens).map(token => ({
-        name: token.name || 'Unknown Token',
-        ticker: token.symbol || 'N/A',
-        mc: formatMarketCap(token.market_cap || token.marketCap || 0),
-        img: proxyImage(token.image_uri || token.image),
-        url: `https://pump.fun/${token.mint || token.address || ''}`
-      }));
-      
-      console.log('Loaded tokens:', allTokens.length);
-      renderTokens();
-    } catch (error) {
-      console.error('Error fetching tokens:', error);
-      loadFallbackData();
+  
+  // Your 16 specific tokens
+  const allTokens = [
+    { 
+      name: "Pippin", 
+      ticker: "PIPPIN", 
+      mc: "$348.0M",
+      img: "https://pump.fun/_next/image?url=https%3A%2F%2Fipfs.io%2Fipfs%2FQmSbRT4dcvGP6xCe8VPvJ8gPQjgaYKZVKP7o4j8DnFv9v3&w=256&q=75",
+      url: "https://pump.fun/coin/Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump"
+    },
+    { 
+      name: "Fartcoin", 
+      ticker: "FARTCOIN", 
+      mc: "$155.9M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=FART",
+      url: "https://pump.fun/coin/9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump"
+    },
+    { 
+      name: "Return to Player", 
+      ticker: "RTP", 
+      mc: "$140.7M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=RTP",
+      url: "https://pump.fun/coin/ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY"
+    },
+    { 
+      name: "Comedian", 
+      ticker: "BAN", 
+      mc: "$108.9M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=BAN",
+      url: "https://pump.fun/coin/a3W4qutoEJA4232T2gwZUfgYJTetr96pU4SJMwppump"
+    },
+    { 
+      name: "Token 5", 
+      ticker: "TK5", 
+      mc: "$95.2M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK5",
+      url: "https://pump.fun/coin/2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump"
+    },
+    { 
+      name: "Token 6", 
+      ticker: "TK6", 
+      mc: "$87.5M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK6",
+      url: "https://pump.fun/coin/CeCQXt8CNdH9UQVQqLj4yZu74wjugMmnq9nQ5TqGpump"
+    },
+    { 
+      name: "Token 7", 
+      ticker: "TK7", 
+      mc: "$76.8M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK7",
+      url: "https://pump.fun/coin/8J69rbLTzWWgUJziFY8jeu5tDwEPBwUz4pKBMr5rpump"
+    },
+    { 
+      name: "Token 8", 
+      ticker: "TK8", 
+      mc: "$68.3M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK8",
+      url: "https://pump.fun/coin/9AvytnUKsLxPxFHFqS6VLxaxt5p6BhYNr53SD2Chpump"
+    },
+    { 
+      name: "Token 9", 
+      ticker: "TK9", 
+      mc: "$92.1M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK9",
+      url: "https://pump.fun/coin/8XtRWb4uAAJFMP4QQhoYYCWR6XXb7ybcCdiqPwz9s5WS"
+    },
+    { 
+      name: "Token 10", 
+      ticker: "TK10", 
+      mc: "$81.7M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK10",
+      url: "https://pump.fun/coin/GHichsGq8aPnqJyz6Jp1ASTK4PNLpB5KrD6XrfDjpump"
+    },
+    { 
+      name: "Token 11", 
+      ticker: "TK11", 
+      mc: "$73.4M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK11",
+      url: "https://pump.fun/coin/DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump"
+    },
+    { 
+      name: "Token 12", 
+      ticker: "TK12", 
+      mc: "$65.9M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK12",
+      url: "https://pump.fun/coin/2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump"
+    },
+    { 
+      name: "Token 13", 
+      ticker: "TK13", 
+      mc: "$88.2M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK13",
+      url: "https://pump.fun/coin/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2"
+    },
+    { 
+      name: "Token 14", 
+      ticker: "TK14", 
+      mc: "$79.5M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK14",
+      url: "https://pump.fun/coin/FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump"
+    },
+    { 
+      name: "Token 15", 
+      ticker: "TK15", 
+      mc: "$71.8M",
+      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK15",
+      url: "https://pump.fun/coin/9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump"
+    },
+    { 
+      name: "Token 16", 
+      ticker: "TK16", 
+      mc: "$63.2M",
+      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK16",
+      url: "https://pump.fun/coin/ArUyEVWGCzZMtAxcPmNH8nDFZ4kMjxrMbpsQf3NEpump"
     }
-  }
-
-  function formatMarketCap(mc) {
-    if (mc >= 1000000) return `$${(mc / 1000000).toFixed(2)}M`;
-    if (mc >= 1000) return `$${(mc / 1000).toFixed(1)}K`;
-    return `$${Math.round(mc)}`;
-  }
-
-  function loadFallbackData() {
-    // High-quality fallback data in the $50M-$100M range
-    allTokens = [
-      { name: "Top Token Alpha", ticker: "ALPHA", mc: "$75.5M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=ALPHA", url: "https://pump.fun/" },
-      { name: "Beta Coin", ticker: "BETA", mc: "$68.2M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=BETA", url: "https://pump.fun/" },
-      { name: "Gamma Protocol", ticker: "GAMMA", mc: "$85.7M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=GAMMA", url: "https://pump.fun/" },
-      { name: "Delta Finance", ticker: "DELTA", mc: "$92.1M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=DELTA", url: "https://pump.fun/" },
-      { name: "Epsilon Token", ticker: "EPS", mc: "$55.8M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=EPS", url: "https://pump.fun/" },
-      { name: "Zeta Network", ticker: "ZETA", mc: "$78.4M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=ZETA", url: "https://pump.fun/" },
-      { name: "Theta Chain", ticker: "THETA", mc: "$65.9M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=THETA", url: "https://pump.fun/" },
-      { name: "Iota System", ticker: "IOTA", mc: "$71.2M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=IOTA", url: "https://pump.fun/" },
-      { name: "Kappa Verse", ticker: "KAPPA", mc: "$88.5M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=KAPPA", url: "https://pump.fun/" },
-      { name: "Lambda Tech", ticker: "LAMBDA", mc: "$95.7M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=LAMBDA", url: "https://pump.fun/" },
-      { name: "Mu Protocol", ticker: "MU", mc: "$62.3M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=MU", url: "https://pump.fun/" },
-      { name: "Nu Network", ticker: "NU", mc: "$73.8M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=NU", url: "https://pump.fun/" },
-      { name: "Xi Finance", ticker: "XI", mc: "$81.4M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=XI", url: "https://pump.fun/" },
-      { name: "Omicron Coin", ticker: "OMI", mc: "$67.9M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=OMI", url: "https://pump.fun/" },
-      { name: "Pi System", ticker: "PI", mc: "$90.2M", img: "https://via.placeholder.com/200/4cde7e/060d0a?text=PI", url: "https://pump.fun/" },
-      { name: "Rho Token", ticker: "RHO", mc: "$58.6M", img: "https://via.placeholder.com/200/7b61ff/ffffff?text=RHO", url: "https://pump.fun/" },
-    ];
-    renderTokens();
-  }
-
-  // Proxy image URLs to avoid CORS issues
-  function proxyImage(url) {
-    if (!url || url.includes('placeholder')) return url;
-    
-    // Try multiple image proxy services
-    const proxies = [
-      `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=200&h=200&fit=cover`,
-      `https://wsrv.nl/?url=${encodeURIComponent(url)}&w=200&h=200&fit=cover`,
-      url // fallback to original
-    ];
-    
-    return proxies[0];
-  }
+  ];
 
   function renderTokens() {
     const grid = document.getElementById('tokenGrid');
@@ -460,62 +487,35 @@
     const end = start + tokensPerPage;
     const tokensToShow = allTokens.slice(start, end);
     
-    if (tokensToShow.length === 0) {
-      grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--muted);">Loading top tokens...</div>';
-      return;
-    }
-    
     grid.innerHTML = tokensToShow.map(token => `
       <a href="${token.url}" target="_blank" class="token-card">
         <img 
           src="${token.img}" 
           alt="${token.name}" 
           class="token-img" 
-          onerror="this.src='https://via.placeholder.com/200/4cde7e/060d0a?text=${encodeURIComponent(token.ticker)}'" 
-          loading="lazy"
+          onerror="this.src='https://via.placeholder.com/60/4cde7e/060d0a?text=${encodeURIComponent(token.ticker)}'"
         />
-        <div class="token-name">${token.name}</div>
-        <div class="token-ticker">${token.ticker}</div>
-        <div class="token-mc">MC: ${token.mc}</div>
+        <div class="token-info">
+          <div class="token-name">${token.name}</div>
+          <div class="token-ticker">${token.ticker}</div>
+          <div class="token-mc">MC: ${token.mc}</div>
+        </div>
       </a>
     `).join('');
-    
-    // Update page indicator
-    const totalPages = Math.ceil(allTokens.length / tokensPerPage);
-    document.getElementById('pageIndicator').textContent = `Page ${currentPage + 1} of ${totalPages}`;
   }
 
-  document.getElementById('prevTokens').addEventListener('click', () => {
-    if (currentPage > 0) {
-      currentPage--;
-      renderTokens();
-    }
-  });
-
-  document.getElementById('nextTokens').addEventListener('click', () => {
+  // Initial render
+  renderTokens();
+  
+  // Auto-rotate every 15 seconds
+  setInterval(() => {
     if ((currentPage + 1) * tokensPerPage < allTokens.length) {
       currentPage++;
-      renderTokens();
+    } else {
+      currentPage = 0;
     }
-  });
-
-  // Initial fetch
-  fetchTokens();
-  
-  // Refresh data every 2 minutes
-  setInterval(fetchTokens, 120000);
-  
-  // Auto-rotate pages every 8 seconds
-  setInterval(() => {
-    if (allTokens.length > 0) {
-      if ((currentPage + 1) * tokensPerPage < allTokens.length) {
-        currentPage++;
-      } else {
-        currentPage = 0;
-      }
-      renderTokens();
-    }
-  }, 8000);
+    renderTokens();
+  }, 15000); // 15 seconds
 </script>
 
 <!-- USE CASES -->
