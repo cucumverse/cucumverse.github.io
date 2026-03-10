@@ -288,6 +288,52 @@
   </div>
 </div>
 
+<!-- USE CASES -->
+<section id="usecases" class="usecases-section">
+  <div class="section-tag">Use Cases</div>
+  <h2 class="section-title">Built for Creators & Traders</h2>
+  <p class="section-sub">Whether you're launching a token or trading one, Cucumverse has a strategy for you.</p>
+  <div class="usecases-grid">
+    <div class="usecase-card green">
+      <div class="usecase-label">For Token Creators</div>
+      <h3>Shape Your Market</h3>
+      <ul class="usecase-list">
+        <li>👛 Manage multiple wallets</li>
+        <li>🧺 Bundle buy across wallets</li>
+        <li>🎯 Stealth sniper</li>
+        <li>📈 Volume maker</li>
+      </ul>
+      <div class="benefit-box">Bulk buy across multiple wallets simultaneously, drive initial volume, boost token visibility, and shape market perception — all in a single execution.</div>
+      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Get Started</a>
+    </div>
+    <div class="usecase-card violet">
+      <div class="usecase-label">For Token Buyers / Traders</div>
+      <h3>Execute With Precision</h3>
+      <ul class="usecase-list">
+        <li>👛 Manage multiple wallets</li>
+        <li>🧺 Bundle buy across wallets</li>
+        <li>🎯 Stealth sniper</li>
+        <li>📈 Volume maker</li>
+      </ul>
+      <div class="benefit-box">Manage multiple wallets, execute bulk trades across all of them in one go, and run complex multi-wallet strategies with full precision and control.</div>
+      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-violet">Start Trading</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Check it out and start trading:<br/>with the <span class="green">Cucum</span><span class="violet">verse</span> Bot?</h2>
+  <p>Set up in minutes. No coding needed. Control multiple wallets, execute bulk trades across all of them simultaneously, and run advanced strategies — all from Telegram.</p>
+  <div class="cta-btns">
+    <a href="https://pump.fun/" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Find a token on PumpFun</a>
+    <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Launch Cucumverse</a>
+  </div>
+  <div class="cta-btns" style="margin-top:1rem;">
+    <a href="#howto" class="btn btn-outline" style="padding:1rem 2.5rem;font-size:0.9rem;">How It Works</a>
+  </div>
+</section>
+
 <!-- TRENDING TOKENS SECTION -->
 <section style="padding: 3rem 5%; background: var(--bg);">
   <div style="margin-bottom: 1.5rem;">
@@ -365,119 +411,119 @@
   let currentPage = 0;
   const tokensPerPage = 4;
   
-  // Your 16 specific tokens
+  // Your 16 specific tokens with attractive placeholders
   const allTokens = [
+    { 
+      name: "Solana Wizard", 
+      ticker: "WIZARD", 
+      mc: "$95.2M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=wizard&backgroundColor=4cde7e,7b61ff&scale=80",
+      url: "https://pump.fun/coin/2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump"
+    },
+    { 
+      name: "Moon Rocket", 
+      ticker: "ROCKET", 
+      mc: "$87.5M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=rocket&backgroundColor=ff6b9d,ffd93d&scale=80",
+      url: "https://pump.fun/coin/CeCQXt8CNdH9UQVQqLj4yZu74wjugMmnq9nQ5TqGpump"
+    },
+    { 
+      name: "Diamond Hands", 
+      ticker: "DIAMOND", 
+      mc: "$76.8M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=diamond&backgroundColor=4ecdc4,95e1d3&scale=80",
+      url: "https://pump.fun/coin/8J69rbLTzWWgUJziFY8jeu5tDwEPBwUz4pKBMr5rpump"
+    },
+    { 
+      name: "Crypto King", 
+      ticker: "KING", 
+      mc: "$68.3M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=king&backgroundColor=f38181,aa96da&scale=80",
+      url: "https://pump.fun/coin/9AvytnUKsLxPxFHFqS6VLxaxt5p6BhYNr53SD2Chpump"
+    },
+    { 
+      name: "Degen Ape", 
+      ticker: "APE", 
+      mc: "$92.1M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=ape&backgroundColor=4cde7e,6bcf7f&scale=80",
+      url: "https://pump.fun/coin/8XtRWb4uAAJFMP4QQhoYYCWR6XXb7ybcCdiqPwz9s5WS"
+    },
+    { 
+      name: "Pepe Coin", 
+      ticker: "PEPE", 
+      mc: "$81.7M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=pepe&backgroundColor=a8e6cf,dcedc1&scale=80",
+      url: "https://pump.fun/coin/GHichsGq8aPnqJyz6Jp1ASTK4PNLpB5KrD6XrfDjpump"
+    },
+    { 
+      name: "Shiba Galaxy", 
+      ticker: "SHIB", 
+      mc: "$73.4M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=shiba&backgroundColor=ff6b6b,feca57&scale=80",
+      url: "https://pump.fun/coin/DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump"
+    },
+    { 
+      name: "Doge Warriors", 
+      ticker: "DOGE", 
+      mc: "$65.9M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=doge&backgroundColor=48dbfb,0abde3&scale=80",
+      url: "https://pump.fun/coin/2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump"
+    },
+    { 
+      name: "Floki Inu", 
+      ticker: "FLOKI", 
+      mc: "$88.2M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=floki&backgroundColor=ee5a6f,f29494&scale=80",
+      url: "https://pump.fun/coin/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2"
+    },
+    { 
+      name: "Baby Doge", 
+      ticker: "BABYDOGE", 
+      mc: "$79.5M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=babydoge&backgroundColor=c7ecee,686de0&scale=80",
+      url: "https://pump.fun/coin/FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump"
+    },
+    { 
+      name: "Safemoon V2", 
+      ticker: "SAFE", 
+      mc: "$71.8M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=safe&backgroundColor=4cde7e,22a6b3&scale=80",
+      url: "https://pump.fun/coin/9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump"
+    },
+    { 
+      name: "Bonk Inu", 
+      ticker: "BONK", 
+      mc: "$63.2M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=bonk&backgroundColor=f9ca24,f0932b&scale=80",
+      url: "https://pump.fun/coin/ArUyEVWGCzZMtAxcPmNH8nDFZ4kMjxrMbpsQf3NEpump"
+    },
     { 
       name: "Pippin", 
       ticker: "PIPPIN", 
       mc: "$348.0M",
-      img: "https://pump.fun/_next/image?url=https%3A%2F%2Fipfs.io%2Fipfs%2FQmSbRT4dcvGP6xCe8VPvJ8gPQjgaYKZVKP7o4j8DnFv9v3&w=256&q=75",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=pippin&backgroundColor=eb4d4b,6c5ce7&scale=80",
       url: "https://pump.fun/coin/Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump"
     },
     { 
       name: "Fartcoin", 
-      ticker: "FARTCOIN", 
+      ticker: "FART", 
       mc: "$155.9M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=FART",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=fart&backgroundColor=a29bfe,fd79a8&scale=80",
       url: "https://pump.fun/coin/9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump"
     },
     { 
-      name: "Return to Player", 
+      name: "RTP Token", 
       ticker: "RTP", 
       mc: "$140.7M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=RTP",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=rtp&backgroundColor=4cde7e,74b9ff&scale=80",
       url: "https://pump.fun/coin/ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY"
     },
     { 
       name: "Comedian", 
       ticker: "BAN", 
       mc: "$108.9M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=BAN",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=banana&backgroundColor=ffd93d,fcbf49&scale=80",
       url: "https://pump.fun/coin/a3W4qutoEJA4232T2gwZUfgYJTetr96pU4SJMwppump"
-    },
-    { 
-      name: "Token 5", 
-      ticker: "TK5", 
-      mc: "$95.2M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK5",
-      url: "https://pump.fun/coin/2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump"
-    },
-    { 
-      name: "Token 6", 
-      ticker: "TK6", 
-      mc: "$87.5M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK6",
-      url: "https://pump.fun/coin/CeCQXt8CNdH9UQVQqLj4yZu74wjugMmnq9nQ5TqGpump"
-    },
-    { 
-      name: "Token 7", 
-      ticker: "TK7", 
-      mc: "$76.8M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK7",
-      url: "https://pump.fun/coin/8J69rbLTzWWgUJziFY8jeu5tDwEPBwUz4pKBMr5rpump"
-    },
-    { 
-      name: "Token 8", 
-      ticker: "TK8", 
-      mc: "$68.3M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK8",
-      url: "https://pump.fun/coin/9AvytnUKsLxPxFHFqS6VLxaxt5p6BhYNr53SD2Chpump"
-    },
-    { 
-      name: "Token 9", 
-      ticker: "TK9", 
-      mc: "$92.1M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK9",
-      url: "https://pump.fun/coin/8XtRWb4uAAJFMP4QQhoYYCWR6XXb7ybcCdiqPwz9s5WS"
-    },
-    { 
-      name: "Token 10", 
-      ticker: "TK10", 
-      mc: "$81.7M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK10",
-      url: "https://pump.fun/coin/GHichsGq8aPnqJyz6Jp1ASTK4PNLpB5KrD6XrfDjpump"
-    },
-    { 
-      name: "Token 11", 
-      ticker: "TK11", 
-      mc: "$73.4M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK11",
-      url: "https://pump.fun/coin/DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump"
-    },
-    { 
-      name: "Token 12", 
-      ticker: "TK12", 
-      mc: "$65.9M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK12",
-      url: "https://pump.fun/coin/2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump"
-    },
-    { 
-      name: "Token 13", 
-      ticker: "TK13", 
-      mc: "$88.2M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK13",
-      url: "https://pump.fun/coin/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2"
-    },
-    { 
-      name: "Token 14", 
-      ticker: "TK14", 
-      mc: "$79.5M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK14",
-      url: "https://pump.fun/coin/FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump"
-    },
-    { 
-      name: "Token 15", 
-      ticker: "TK15", 
-      mc: "$71.8M",
-      img: "https://via.placeholder.com/60/4cde7e/060d0a?text=TK15",
-      url: "https://pump.fun/coin/9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump"
-    },
-    { 
-      name: "Token 16", 
-      ticker: "TK16", 
-      mc: "$63.2M",
-      img: "https://via.placeholder.com/60/7b61ff/ffffff?text=TK16",
-      url: "https://pump.fun/coin/ArUyEVWGCzZMtAxcPmNH8nDFZ4kMjxrMbpsQf3NEpump"
     }
   ];
 
@@ -517,39 +563,6 @@
     renderTokens();
   }, 15000); // 15 seconds
 </script>
-
-<!-- USE CASES -->
-<section id="usecases" class="usecases-section">
-  <div class="section-tag">Use Cases</div>
-  <h2 class="section-title">Built for Creators & Traders</h2>
-  <p class="section-sub">Whether you're launching a token or trading one, Cucumverse has a strategy for you.</p>
-  <div class="usecases-grid">
-    <div class="usecase-card green">
-      <div class="usecase-label">For Token Creators</div>
-      <h3>Shape Your Market</h3>
-      <ul class="usecase-list">
-        <li>👛 Manage multiple wallets</li>
-        <li>🧺 Bundle buy across wallets</li>
-        <li>🎯 Stealth sniper</li>
-        <li>📈 Volume maker</li>
-      </ul>
-      <div class="benefit-box">Bulk buy across multiple wallets simultaneously, drive initial volume, boost token visibility, and shape market perception — all in a single execution.</div>
-      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Get Started</a>
-    </div>
-    <div class="usecase-card violet">
-      <div class="usecase-label">For Token Buyers / Traders</div>
-      <h3>Execute With Precision</h3>
-      <ul class="usecase-list">
-        <li>👛 Manage multiple wallets</li>
-        <li>🧺 Bundle buy across wallets</li>
-        <li>🎯 Stealth sniper</li>
-        <li>📈 Volume maker</li>
-      </ul>
-      <div class="benefit-box">Manage multiple wallets, execute bulk trades across all of them in one go, and run complex multi-wallet strategies with full precision and control.</div>
-      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-violet">Start Trading</a>
-    </div>
-  </div>
-</section>
 
 <!-- HOW IT WORKS -->
 <section id="howto">
@@ -626,7 +639,6 @@
   </p>
 </section>
 
-
 <!-- COMING SOON NOTICE -->
 <div class="notice">
   <strong>🔜 Coming Soon:</strong> Support for <strong>BNB Chain</strong>, <strong>Ethereum</strong>, and <strong>Base</strong> wallets — expanding the verse beyond Solana.
@@ -663,20 +675,6 @@
     
   </div>
 </section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <h2>Check it out and start trading:<br/>with the <span class="green">Cucum</span><span class="violet">verse</span> Bot?</h2>
-  <p>Set up in minutes. No coding needed. Control multiple wallets, execute bulk trades across all of them simultaneously, and run advanced strategies — all from Telegram.</p>
-  <div class="cta-btns">
-    <a href="https://pump.fun/" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Find a token on PumpFun</a>
-    <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Launch Cucumverse</a>
-  </div>
-  <div class="cta-btns" style="margin-top:1rem;">
-    <a href="#howto" class="btn btn-outline" style="padding:1rem 2.5rem;font-size:0.9rem;">How It Works</a>
-  </div>
-</section>
-
 
 
 <!-- FOOTER -->
