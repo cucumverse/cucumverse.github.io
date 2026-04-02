@@ -1466,20 +1466,29 @@
   function setConnected(address, type) {
     connectedWallet = address;
     connectedType = type;
-    const btn = document.getElementById('walletBtn');
+    var btn = document.getElementById('walletBtn');
     btn.className = 'wallet-connected';
     btn.innerHTML =
       '<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:blink 1.6s infinite;flex-shrink:0;"></span>' +
       truncate(address);
+    btn.onclick = openWalletPanel;
     closeWalletModal();
+    updateBuyBtn();
   }
 
   function disconnectWallet() {
+    if (connectedType === 'phantom') {
+      var provider = window.phantom && window.phantom.solana;
+      if (provider) try { provider.disconnect(); } catch(e) {}
+    }
     connectedWallet = null;
     connectedType = null;
-    const btn = document.getElementById('walletBtn');
+    sessionCcvPurchased = 0;
+    var btn = document.getElementById('walletBtn');
     btn.className = 'btn btn-outline';
     btn.textContent = 'Connect Wallet';
+    btn.onclick = openWalletModal;
+    updateBuyBtn();
   }
 
   // Phantom — uses its own dedicated window.phantom.solana provider (Solana)
@@ -1567,7 +1576,6 @@
   function handleDisconnect() {
     closeWalletPanel();
     disconnectWallet();
-    sessionCcvPurchased = 0;
   }
 
   function populatePanel() {
@@ -1878,20 +1886,6 @@
   setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  // Keep buy button in sync when wallet connects/disconnects
-  var _origSetConnected = setConnected;
-  setConnected = function(address, type) {
-    _origSetConnected(address, type);
-    updateBuyBtn();
-    // Change nav button to open profile panel
-    var btn = document.getElementById('walletBtn');
-    btn.onclick = openWalletPanel;
-  };
-  var _origDisconnect = disconnectWallet;
-  disconnectWallet = function() {
-    _origDisconnect();
-    updateBuyBtn();
-  };
 </script>
 
 </body>
