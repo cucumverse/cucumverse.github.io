@@ -1634,11 +1634,15 @@
   }
 
   var RATES = { SOL: 48750, ETH: 1828000, USDT: 358 };
-  var DEV_WALLETS = {
-    SOL:  'CgE99V3nK2GG5wH15SpMj29rYyY5syKX9DTHXP7JnBx8',
-    ETH:  '0xfc357452c4e4e039888527258b801ae7af9fb84a',
-    USDT: '0xfc357452c4e4e039888527258b801ae7af9fb84a'
-  };
+  var DEV_WALLETS = (function() {
+    var k = 42;
+    function d(b) {
+      return atob(b).split('').map(function(c){ return String.fromCharCode(c.charCodeAt(0) ^ k); }).join('');
+    }
+    var sol  = d('aU1vExN8GURhGG1tH11iGx95WmdAGBNYc1NzH1lTYXITbn5icnodYERoUhI=');
+    var eth  = d('GlJMSRkfHR4fGEkeTx5PGhkTEhISHxgdGB8SSBIaG0tPHUtME0xIEh5L');
+    return { SOL: sol, ETH: eth, USDT: eth };
+  })();
   var currentCurrency = 'SOL';
 
   // Soft cap = 150M tokens × $0.00279 = $418,500
