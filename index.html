@@ -1,499 +1,1906 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Hash Points — Cucumverse</title>
+  <title>Cucumverse — Multi-Wallet Trading Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;600;800&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100vh;
-      font-family: 'Outfit', sans-serif;
-      color: #e8ffe8;
-      overflow-x: hidden;
-      position: relative;
-      background: #010a04;
+    :root {
+      --bg: #060d0a;
+      --surface: #0a1510;
+      --border: #1e4a2e;
+      --accent: #4cde7e;
+      --accent2: #ffffff;
+      --accent3: #7b61ff;
+      --text: #ffffff;
+      --muted: #e8e8e8;
+      --mono: 'Space Mono', monospace;
+      --sans: 'Outfit', sans-serif;
     }
+    body { background: var(--bg); color: var(--text); font-family: var(--sans); overflow-x: hidden; }
+    a { text-decoration: none; color: inherit; }
 
-    /* ── Cosmos galaxy background ── */
-    .galaxy {
-      position: fixed; inset: 0; z-index: 0;
-      background:
-        radial-gradient(ellipse at 20% 30%, rgba(0,80,30,0.55) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 70%, rgba(0,50,20,0.45) 0%, transparent 50%),
-        radial-gradient(ellipse at 50% 50%, rgba(10,40,15,0.6) 0%, transparent 70%),
-        radial-gradient(ellipse at 10% 80%, rgba(0,100,40,0.3) 0%, transparent 40%),
-        radial-gradient(ellipse at 90% 10%, rgba(20,80,40,0.35) 0%, transparent 45%),
-        #010a04;
-    }
-
-    /* Stars */
-    .stars {
-      position: fixed; inset: 0; z-index: 0;
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background-image:
-        radial-gradient(1px 1px at 10% 15%, rgba(150,255,150,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 25% 40%, rgba(200,255,200,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 40% 10%, rgba(100,255,100,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 55% 60%, rgba(180,255,180,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 70% 25%, rgba(150,255,150,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 85% 50%, rgba(200,255,200,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 15% 70%, rgba(100,255,100,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 30% 85%, rgba(180,255,180,0.3) 0%, transparent 100%),
-        radial-gradient(1px 1px at 60% 80%, rgba(150,255,150,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 75% 90%, rgba(200,255,200,0.4) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 45% 35%, rgba(100,255,150,0.7) 0%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 90% 65%, rgba(150,255,100,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 5%  50%, rgba(200,255,180,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 95% 30%, rgba(180,255,200,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 50% 95%, rgba(150,255,150,0.4) 0%, transparent 100%);
-      animation: twinkle 6s ease-in-out infinite alternate;
-    }
-    @keyframes twinkle {
-      0%   { opacity: 0.7; }
-      100% { opacity: 1; }
+        radial-gradient(600px 600px at 80% 20%, rgba(123,97,255,0.04) 0%, transparent 70%),
+        radial-gradient(800px 800px at 20% 80%, rgba(76,222,126,0.04) 0%, transparent 70%);
     }
 
-    /* ── Layout ── */
-    .page {
-      position: relative; z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1.5rem 3rem;
-    }
-
-    /* ── Logo ── */
-    .logo-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 1.2rem;
-    }
-    .logo-wrap img {
-      width: 90px;
-      height: 90px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 18px rgba(76,222,126,0.7));
-      animation: float 3.5s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-8px); }
-    }
-    .logo-name {
-      font-family: 'Space Mono', monospace;
-      font-size: 1rem;
-      color: #4cde7e;
-      letter-spacing: 0.15em;
-      margin-top: 0.4rem;
-      text-shadow: 0 0 12px rgba(76,222,126,0.6);
-    }
-
-    /* ── Title ── */
-    .title {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #fff;
-      text-align: center;
-      margin-bottom: 0.2rem;
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      font-size: 0.78rem;
-      color: #6beba0;
-      text-align: center;
-      margin-bottom: 1.8rem;
-      font-family: 'Space Mono', monospace;
-    }
-
-    /* ── Card ── */
-    .card {
-      width: 100%;
-      max-width: 380px;
-      background: rgba(6,20,10,0.75);
-      border: 1px solid rgba(76,222,126,0.25);
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 99;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 5%;
+      background: rgba(6,13,10,0.95);
       backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo { font-family: var(--mono); font-size: 1.1rem; color: var(--accent); display: flex; align-items: center; gap: 0.6rem; }
+    .logo img { height: 40px; width: 40px; object-fit: contain; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul a { font-size: 0.88rem; font-weight: 600; color: var(--muted); transition: color 0.2s; }
+    nav ul a:hover { color: var(--accent); }
+    .btn { display: inline-block; padding: 0.6rem 1.4rem; font-family: var(--mono); font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.2s; border: none; letter-spacing: 0.03em; }
+    .btn-green { background: var(--accent); color: #060d0a; }
+    .btn-green:hover { background: #6beba0; transform: translateY(-1px); box-shadow: 0 0 24px rgba(76,222,126,0.35); }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-violet { background: var(--accent3); color: #fff; }
+    .btn-violet:hover { background: #9580ff; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 92vh; display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 6rem 0 4rem; display: flex; align-items: center; flex-wrap: nowrap; width: 100%;
+    }
+    .hero-glow-green {
+      position: absolute; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(76,222,126,0.08) 0%, transparent 65%);
+      top: 50%; left: 30%; transform: translate(-50%,-50%); pointer-events: none;
+    }
+    .hero-glow-violet {
+      position: absolute; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(123,97,255,0.07) 0%, transparent 65%);
+      top: 20%; right: 5%; pointer-events: none;
+    }
+    .hero-left { flex: 1; min-width: 300px; padding-left: 6%; padding-right: 3%; }
+    .hero-right { flex: 1; min-width: 280px; display: flex; justify-content: center; align-items: center; padding-right: 6%; }
+    .hero-right img {
+      width: min(650px, 90vw);
+      height: auto;
+      filter: drop-shadow(0 0 40px rgba(76,222,126,0.45));
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--mono); font-size: 0.72rem; color: var(--accent2);
+      border: 1px solid rgba(168,240,192,0.25); padding: 0.35rem 1rem;
+      margin-bottom: 1.5rem; animation: fadeUp 0.5s ease both;
+    }
+    .dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation: blink 1.6s infinite; }
+
+    h1 { font-size: clamp(2.6rem,5.5vw,5rem); font-weight:800; line-height:1.06; letter-spacing:-0.03em; animation: fadeUp 0.5s 0.1s ease both; }
+    h1 .green { color: var(--accent); }
+    h1 .violet { color: var(--accent3); }
+    .hero-sub { margin-top:1.2rem; font-size:1rem; color:var(--muted); max-width:600px; line-height:1.8; animation: fadeUp 0.5s 0.2s ease both; }
+    .hero-btns { margin-top:2rem; display:flex; gap:1rem; flex-wrap:wrap; animation: fadeUp 0.5s 0.3s ease both; }
+
+    .hero-tags { margin-top: 1.8rem; display:flex; flex-wrap:wrap; gap:0.5rem; animation: fadeUp 0.5s 0.4s ease both; }
+    .hero-tag { font-family:var(--mono); font-size:0.68rem; padding:0.25rem 0.8rem; border:1px solid var(--border); color:var(--muted); }
+
+    /* STATS */
+    .stats-bar {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: repeat(4,1fr);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .stat-item { padding: 2rem 1.5rem; text-align: center; border-right: 1px solid var(--border); }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { display:block; font-family:var(--mono); font-size:1.8rem; color:var(--accent); }
+    .stat-desc { display:block; font-size:0.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; margin-top:0.35rem; }
+
+    /* SECTIONS */
+    section { position: relative; z-index: 1; padding: 5.5rem 5%; }
+    .section-tag { font-family:var(--mono); font-size:0.72rem; color:var(--accent); letter-spacing:0.18em; text-transform:uppercase; margin-bottom:0.9rem; }
+    .section-title { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; letter-spacing:-0.02em; line-height:1.2; max-width:560px; margin-bottom:0.8rem; }
+    .section-sub { font-size:0.95rem; color:var(--muted); max-width:540px; line-height:1.75; margin-bottom:3rem; }
+
+    /* FEATURES */
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+    .feature-card { background:var(--bg); padding:2.2rem; transition:background 0.25s; }
+    .feature-card:hover { background:var(--surface); }
+    .feature-icon { font-size:2rem; margin-bottom:1rem; }
+    .feature-card h3 { font-size:1rem; font-weight:700; margin-bottom:0.6rem; color: var(--accent2); }
+    .feature-card p { font-size:0.88rem; color:var(--muted); line-height:1.7; }
+
+    /* USE CASES */
+    .usecases-section { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .usecases-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2rem; }
+    .usecase-card {
+      border:1px solid var(--border); padding:2.5rem; background:var(--bg);
+      transition:border-color 0.3s, transform 0.3s; position:relative; overflow:hidden;
+    }
+    .usecase-card::before {
+      content:''; position:absolute; top:0;left:0;right:0; height:2px;
+      transform:scaleX(0); transform-origin:left; transition:transform 0.35s;
+    }
+    .usecase-card.green::before { background: var(--accent); }
+    .usecase-card.violet::before { background: var(--accent3); }
+    .usecase-card:hover { transform:translateY(-3px); }
+    .usecase-card.green:hover { border-color:rgba(76,222,126,0.4); }
+    .usecase-card.violet:hover { border-color:rgba(123,97,255,0.4); }
+    .usecase-card:hover::before { transform:scaleX(1); }
+    .usecase-label { font-family:var(--mono); font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.7rem; }
+    .usecase-card.green .usecase-label { color:var(--accent); }
+    .usecase-card.violet .usecase-label { color:var(--accent3); }
+    .usecase-card h3 { font-size:1.3rem; font-weight:800; margin-bottom:1rem; }
+    .usecase-list { list-style:none; margin-bottom:1.8rem; }
+    .usecase-list li { font-size:0.9rem; color:var(--muted); line-height:1.8; padding-left:1.2rem; position:relative; }
+    .usecase-list li::before { content:''; position:absolute; left:0; }
+    .usecase-card.violet .usecase-list li::before { color:var(--accent3); }
+    .benefit-box { background:var(--surface); border:1px solid var(--border); padding:1rem 1.2rem; font-size:0.85rem; color:var(--accent2); font-style:italic; margin-bottom:1.5rem; }
+
+    /* HOW IT WORKS */
+    .steps-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:#c8e6c9; border:2px solid #c8e6c9; margin-top:0; border-radius:8px; overflow:hidden; }
+    .step-card { background:#f4fdf6; padding:2rem; transition:background 0.25s; position:relative; }
+    .step-card:hover { background:#e8f8ed; }
+    .step-num { font-family:var(--mono); font-size:2.5rem; font-weight:700; color:#a0d4b0; line-height:1; margin-bottom:0.8rem; }
+    .step-card h3 { font-size:1.1rem; font-weight:800; color:#0f2d1a; margin-bottom:0.6rem; letter-spacing:-0.01em; }
+    .step-card p { font-size:0.98rem; color:#1e4a2e; line-height:1.75; font-weight:500; }
+    .step-tip { margin-top:0.6rem; font-family:var(--mono); font-size:0.8rem; color:#2a7a4b; font-weight:600; }
+
+    /* IDEAL FOR */
+    .ideal-section { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+    .ideal-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--border); border:1px solid var(--border); }
+    .ideal-card { background:var(--bg); padding:2rem 1.5rem; text-align:center; transition:background 0.2s; }
+    .ideal-card:hover { background:#0b160e; }
+    .ideal-icon { font-size:2rem; margin-bottom:0.8rem; }
+    .ideal-card p { font-size:0.82rem; color:var(--muted); line-height:1.6; }
+
+    /* CTA */
+    .cta-section { text-align:center; padding:7rem 5%; }
+    .cta-section h2 { font-size:clamp(2rem,4vw,3.2rem); font-weight:800; letter-spacing:-0.03em; margin-bottom:1rem; }
+    .cta-section h2 .green { color:var(--accent); }
+    .cta-section h2 .violet { color:var(--accent3); }
+    .cta-section p { font-size:1rem; color:var(--muted); margin-bottom:2.5rem; }
+    .cta-btns { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+
+    /* COMMUNITY */
+    .community-section { background:var(--surface); border-top:1px solid var(--border); }
+    .community-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-top:3rem; }
+    .community-card { background:var(--bg); padding:2rem; text-align:center; transition:background 0.2s; }
+    .community-card:hover { background:#0b160e; }
+    .community-card .icon { font-size:2rem; margin-bottom:1rem; }
+    .community-card h4 { font-weight:700; margin-bottom:0.5rem; color:var(--accent2); }
+    .community-card p { font-size:0.85rem; color:var(--muted); margin-bottom:1.2rem; }
+    .community-link { font-family:var(--mono); font-size:0.72rem; color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; border-bottom:1px solid var(--accent); padding-bottom:2px; }
+
+    /* NOTICE BANNER */
+    .notice { background: rgba(123,97,255,0.08); border: 1px solid rgba(123,97,255,0.25); padding:1rem 1.5rem; font-size:0.85rem; color:var(--muted); text-align:center; position:relative; z-index:1; }
+    .notice strong { color:var(--accent3); }
+
+    /* FOOTER */
+    footer { position:relative; z-index:1; padding:2rem 5%; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+    footer p { font-size:0.8rem; color:var(--muted); }
+    .footer-links { display:flex; gap:1.5rem; }
+    .footer-links a { font-size:0.8rem; color:var(--muted); transition:color 0.2s; }
+    .footer-links a:hover { color:var(--accent); }
+
+    @media(max-width:900px){
+      .features-grid,.steps-grid,.ideal-grid{grid-template-columns:repeat(2,1fr);}
+      .usecases-grid,.community-grid{grid-template-columns:1fr;}
+      .stats-bar{grid-template-columns:repeat(2,1fr);}
+      .hero{flex-direction:column; text-align:center; padding-top:7rem;} .hero-left{padding-left:5%; padding-right:5%;} .hero-right{padding-right:5%;}
+      .hero-btns,.hero-tags{justify-content:center;}
+      nav ul{display:none;}
+    }
+    @media(max-width:540px){
+      .features-grid,.steps-grid,.ideal-grid{grid-template-columns:1fr;}
+      .stats-bar{grid-template-columns:1fr;}
+      .stat-item{border-right:none;border-bottom:1px solid var(--border);}
+    }
+
+    /* WALLET MODAL */
+    .wallet-overlay {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center;
+    }
+    .wallet-overlay.open { display: flex; }
+    .wallet-modal {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 2rem; width: min(420px, 90vw); position: relative;
+    }
+    .wallet-modal h3 { font-family: var(--mono); font-size: 1rem; margin-bottom: 0.4rem; color: var(--accent); }
+    .wallet-modal p { font-size: 0.82rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .wallet-close {
+      position: absolute; top: 1rem; right: 1rem;
+      background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer;
+    }
+    .wallet-close:hover { color: var(--text); }
+    .wallet-options { display: flex; flex-direction: column; gap: 0.75rem; }
+    .wallet-option {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.2rem; border: 1px solid var(--border);
+      background: var(--bg); cursor: pointer; transition: all 0.2s;
+      font-family: var(--mono); font-size: 0.85rem; color: var(--text);
+    }
+    .wallet-option:hover { border-color: var(--accent); color: var(--accent); }
+    .wallet-option img { width: 28px; height: 28px; object-fit: contain; }
+    .wallet-option .wallet-desc { font-size: 0.72rem; color: var(--muted); margin-top: 0.15rem; font-family: var(--sans); }
+    .wallet-connected {
+      font-family: var(--mono); font-size: 0.75rem; padding: 0.55rem 1rem;
+      border: 1px solid var(--accent); color: var(--accent); background: rgba(76,222,126,0.08);
+      cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .wallet-connected .dot { background: var(--accent); flex-shrink: 0; }
+    .wallet-connected:hover { background: rgba(76,222,126,0.15); }
+    .wallet-status-msg { margin-top: 1rem; font-size: 0.78rem; font-family: var(--mono); text-align: center; }
+    .wallet-status-msg.error { color: #ff6b6b; }
+    .wallet-status-msg.success { color: var(--accent); }
+
+    /* WALLET PROFILE PANEL */
+    .wallet-panel {
+      position: fixed; top: 0; right: -420px; width: 380px; height: 100vh;
+      background: var(--surface); border-left: 1px solid var(--border);
+      z-index: 998; transition: right 0.3s ease; overflow-y: auto;
       padding: 1.5rem;
-      margin-bottom: 1rem;
     }
+    .wallet-panel.open { right: 0; }
+    .wallet-panel-overlay {
+      display: none; position: fixed; inset: 0; z-index: 997;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(2px);
+    }
+    .wallet-panel-overlay.open { display: block; }
+    .wp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .wp-header h3 { font-family: var(--mono); font-size: 0.85rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; }
+    .wp-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
+    .wp-close:hover { color: var(--text); }
+    .wp-address-box { background: var(--bg); border: 1px solid var(--border); padding: 1rem; margin-bottom: 1.2rem; }
+    .wp-address-label { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+    .wp-address-val { font-family: var(--mono); font-size: 0.78rem; color: var(--accent2); word-break: break-all; }
+    .wp-address-copy { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); cursor: pointer; margin-top: 0.4rem; display: inline-block; }
+    .wp-address-copy:hover { text-decoration: underline; }
+    .wp-chain-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.25rem 0.7rem; border: 1px solid var(--border); font-family: var(--mono); font-size: 0.68rem; color: var(--muted); margin-bottom: 1.2rem; }
+    .wp-section-title { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; margin-top: 1.2rem; }
+    .wp-balance-row { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; background: var(--bg); border: 1px solid var(--border); margin-bottom: 0.5rem; }
+    .wp-balance-token { display: flex; align-items: center; gap: 0.6rem; }
+    .wp-balance-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .wp-balance-name { font-size: 0.85rem; font-weight: 700; }
+    .wp-balance-sub { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+    .wp-balance-amount { text-align: right; }
+    .wp-balance-val { font-family: var(--mono); font-size: 0.88rem; color: var(--accent); font-weight: 700; }
+    .wp-balance-usd { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+    .wp-ccv-box { background: rgba(76,222,126,0.06); border: 1px solid rgba(76,222,126,0.25); padding: 1rem; margin-bottom: 0.5rem; }
+    .wp-ccv-label { font-family: var(--mono); font-size: 0.65rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .wp-ccv-val { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+    .wp-ccv-note { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; }
+    .wp-loading { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); text-align: center; padding: 1rem; }
+    .wp-disconnect { width: 100%; margin-top: 1.5rem; padding: 0.75rem; background: none; border: 1px solid rgba(255,107,107,0.3); color: #ff6b6b; font-family: var(--mono); font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+    .wp-disconnect:hover { background: rgba(255,107,107,0.08); border-color: #ff6b6b; }
 
-    /* ── Progress ── */
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      color: #6beba0;
-      margin-bottom: 0.5rem;
-    }
-    .bar-bg {
-      background: rgba(76,222,126,0.1);
-      border: 1px solid rgba(76,222,126,0.2);
-      height: 14px;
-      border-radius: 2px;
-      overflow: hidden;
-      margin-bottom: 0.5rem;
-    }
-    .bar-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #1a7a3a, #4cde7e, #6beba0);
-      border-radius: 2px;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 8px rgba(76,222,126,0.5);
-    }
-    .pct-display {
-      font-family: 'Space Mono', monospace;
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #4cde7e;
-      text-align: center;
-      text-shadow: 0 0 16px rgba(76,222,126,0.6);
-      margin-bottom: 0.3rem;
-    }
+    /* PRESALE */
+    .presale-section { background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 5.5rem 5%; }
+    .presale-inner { display: grid; grid-template-columns: 1fr 1.1fr; gap: 4rem; align-items: start; max-width: 1100px; margin: 0 auto; }
+    .presale-info { display: block; }
+    .presale-token { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .presale-token img { width: 100px; height: 100px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; object-position: center center; background: var(--surface); }
+    .presale-token-name { font-size: 1.3rem; font-weight: 800; }
+    .presale-token-ticker { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); margin-top: 0.2rem; }
+    .presale-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 1.5rem 0; }
+    .presale-stat { background: var(--surface); border: 1px solid var(--border); padding: 0.9rem 1rem; }
+    .presale-stat-label { font-family: var(--mono); font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .presale-stat-val { font-family: var(--mono); font-size: 1rem; font-weight: 700; color: var(--accent2); }
+    .presale-rates { margin-top: 1.2rem; }
+    .presale-rates-title { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem; }
+    .rate-row { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid rgba(30,74,46,0.4); font-size: 0.85rem; }
+    .rate-row:last-child { border-bottom: none; }
+    .rate-row span:first-child { color: var(--muted); }
+    .rate-row span:last-child { font-family: var(--mono); color: var(--accent); font-weight: 700; }
 
-    /* ── Decimal hashing display ── */
-    .hash-scroll {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.6rem;
-      color: rgba(76,222,126,0.5);
-      text-align: center;
-      word-break: break-all;
-      min-height: 1.2rem;
-      margin-bottom: 1rem;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
+    /* Progress */
+    .presale-progress-wrap { margin: 1.5rem 0 0.5rem; }
+    .presale-progress-labels { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .presale-progress-bar { height: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+    .presale-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #6beba0); border-radius: 2px; transition: width 0.6s ease; }
+    .presale-progress-pct { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-top: 0.4rem; text-align: right; }
 
-    /* ── User info ── */
-    .user-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.6rem 0.8rem;
-      background: rgba(76,222,126,0.05);
-      border: 1px solid rgba(76,222,126,0.15);
-      margin-bottom: 0.6rem;
-      font-size: 0.78rem;
-    }
-    .user-row .label { color: #6beba0; font-family: 'Space Mono', monospace; font-size: 0.65rem; }
-    .user-row .value { color: #fff; font-weight: 700; font-family: 'Space Mono', monospace; }
+    /* Countdown */
+    .presale-countdown { display: flex; gap: 0.75rem; margin: 1.5rem 0; }
+    .countdown-block { flex: 1; background: var(--surface); border: 1px solid var(--border); padding: 0.8rem 0.5rem; text-align: center; }
+    .countdown-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; color: var(--accent); line-height: 1; }
+    .countdown-label { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+    .countdown-ext { font-family: var(--mono); font-size: 0.7rem; color: var(--accent3); text-align: center; margin-top: -0.5rem; margin-bottom: 0.5rem; min-height: 1rem; }
 
-    /* ── Points box ── */
-    .points-box {
-      border: 1px solid rgba(76,222,126,0.35);
-      background: rgba(76,222,126,0.06);
-      padding: 1rem;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    .points-box .pts-label {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      color: #6beba0;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.3rem;
-    }
-    .points-box .pts-val {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: #4cde7e;
-      text-shadow: 0 0 20px rgba(76,222,126,0.7);
-      line-height: 1;
-    }
-    .points-box .pts-note {
-      font-size: 0.68rem;
-      color: rgba(107,235,160,0.6);
-      margin-top: 0.3rem;
-      font-family: 'Space Mono', monospace;
-    }
+    /* Buy box */
+    .presale-box { background: var(--surface); border: 1px solid var(--border); padding: 2rem; }
+    .presale-box-title { font-family: var(--mono); font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 1.5rem; }
+    .presale-tabs { display: flex; gap: 0; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+    .presale-tab { flex: 1; padding: 0.6rem; font-family: var(--mono); font-size: 0.75rem; background: none; border: none; color: var(--muted); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .presale-tab.active { background: var(--accent); color: #060d0a; font-weight: 700; }
+    .presale-tab:not(.active):hover { color: var(--accent); }
+    .presale-input-wrap { position: relative; margin-bottom: 0.75rem; }
+    .presale-input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--mono); font-size: 1rem; padding: 0.85rem 4rem 0.85rem 1rem; outline: none; transition: border-color 0.2s; }
+    .presale-input:focus { border-color: var(--accent); }
+    .presale-input-currency { position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-family: var(--mono); font-size: 0.75rem; color: var(--muted); pointer-events: none; }
+    .presale-receive { background: var(--bg); border: 1px solid var(--border); padding: 0.85rem 1rem; margin-bottom: 1.2rem; display: flex; justify-content: space-between; align-items: center; }
+    .presale-receive-label { font-size: 0.78rem; color: var(--muted); }
+    .presale-receive-val { font-family: var(--mono); font-size: 1rem; color: var(--accent); font-weight: 700; }
+    .presale-buy-btn { width: 100%; padding: 1rem; background: var(--accent); color: #060d0a; font-family: var(--mono); font-size: 0.9rem; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; letter-spacing: 0.05em; }
+    .presale-buy-btn:hover { background: #6beba0; box-shadow: 0 0 24px rgba(76,222,126,0.35); }
+    .presale-buy-btn:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; box-shadow: none; }
+    .presale-wallet-note { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 0.8rem; font-family: var(--mono); }
+    .presale-tx { margin-top: 1rem; padding: 0.8rem 1rem; background: rgba(76,222,126,0.07); border: 1px solid rgba(76,222,126,0.25); font-size: 0.75rem; font-family: var(--mono); display: none; word-break: break-all; }
+    .presale-tx a { color: var(--accent); text-decoration: underline; }
+    .presale-tx-err { margin-top: 1rem; padding: 0.8rem 1rem; background: rgba(255,107,107,0.07); border: 1px solid rgba(255,107,107,0.25); font-size: 0.75rem; font-family: var(--mono); color: #ff6b6b; display: none; }
+    .presale-dev-wallet { margin-top: 1.2rem; padding: 0.75rem 1rem; background: var(--bg); border: 1px solid var(--border); font-size: 0.7rem; font-family: var(--mono); color: var(--muted); word-break: break-all; }
+    .presale-dev-wallet span { color: var(--accent2); display: block; margin-top: 0.2rem; }
 
-    /* ── Button ── */
-    .btn {
-      width: 100%;
-      max-width: 380px;
-      padding: 1rem;
-      background: #4cde7e;
-      color: #010a04;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.9rem;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      letter-spacing: 0.05em;
-      transition: all 0.2s;
-      box-shadow: 0 0 20px rgba(76,222,126,0.3);
-    }
-    .btn:hover:not(:disabled) {
-      background: #6beba0;
-      box-shadow: 0 0 30px rgba(76,222,126,0.5);
-    }
-    .btn:disabled {
-      background: rgba(76,222,126,0.15);
-      color: rgba(76,222,126,0.4);
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .status-msg {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.68rem;
-      color: rgba(107,235,160,0.7);
-      text-align: center;
-      margin-top: 0.8rem;
-      min-height: 1rem;
-    }
-    .err { color: #ff6b6b; }
+    @media(max-width:900px) { .presale-inner { grid-template-columns: 1fr; gap: 2.5rem; } }
+    @media(max-width:900px) { #tokenomics > div { grid-template-columns: 1fr !important; } }
+    @media(max-width:900px) { #roadmap > div:last-child { grid-template-columns: 1fr !important; } }
   </style>
 </head>
 <body>
 
-<div class="galaxy"></div>
-<div class="stars"></div>
+<!-- AIRDROP BANNER -->
+<a href="https://t.me/CcvAirdropbot" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:0.65rem 5%;background:linear-gradient(90deg,rgba(76,222,126,0.15),rgba(123,97,255,0.15),rgba(76,222,126,0.15));border-bottom:1px solid rgba(76,222,126,0.3);text-decoration:none;cursor:pointer;position:relative;overflow:hidden;animation:bannerShimmer 3s linear infinite;">
+  <span style="font-size:1.1rem;">🪂</span>
+  <span style="font-family:var(--mono);font-size:0.8rem;font-weight:700;color:var(--accent);letter-spacing:0.05em;">AIRDROP IS LIVE</span>
+  <span style="font-size:0.9rem;">🎉</span>
+  <span style="font-family:var(--sans);font-size:0.8rem;color:var(--muted);">— Claim your free $CCV tokens now</span>
+  <span style="font-size:0.9rem;">🚀</span>
+  <span style="font-family:var(--mono);font-size:0.72rem;color:var(--accent);border:1px solid rgba(76,222,126,0.4);padding:0.2rem 0.7rem;margin-left:0.25rem;">Claim Here ↗</span>
+  <span style="font-size:0.9rem;">🌿</span>
+</a>
 
-<div class="page">
+<style>
+  @keyframes bannerShimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+</style>
 
-  <!-- Logo -->
-  <div class="logo-wrap">
-    <img src="https://raw.githubusercontent.com/cucumverse/cucumverse.github.io/main/assets/cucumverselogo.png"
-         onerror="this.style.display='none'"
-         alt="Cucumverse"/>
-    <div class="logo-name">CUCUMVERSE</div>
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <img src="assets/cucumverselogo.png" alt="Cucumverse Logo"/>
+    Cucumverse
   </div>
-
-  <div class="title">🔑 Hash Points</div>
-  <div class="subtitle">Elevate your points just by hashing</div>
-
-  <!-- Main card -->
-  <div class="card">
-
-    <!-- Progress bar -->
-    <div class="progress-label">
-      <span>KEY SEARCH PROGRESS</span>
-      <span id="pctLabel">0%</span>
-    </div>
-    <div class="bar-bg">
-      <div class="bar-fill" id="barFill"></div>
-    </div>
-    <div class="pct-display" id="pctDisplay">0%</div>
-
-    <!-- Decimal hashing scroll -->
-    <div class="hash-scroll" id="hashScroll">— waiting to start —</div>
-
-    <!-- Range info (shown after assign) -->
-    <div class="user-row" id="rowRange" style="display:none">
-      <span class="label">KEY RANGE START</span>
-      <span class="value" id="rangeStart">—</span>
-    </div>
-
-    <!-- User info -->
-    <div class="user-row">
-      <span class="label">TELEGRAM ID</span>
-      <span class="value" id="userChatId">—</span>
-    </div>
-    <div class="user-row">
-      <span class="label">TOTAL POINTS</span>
-      <span class="value" id="userPoints">—</span>
-    </div>
-
+  <ul>
+    <li><a href="#presale" style="color:var(--accent);">🔥 Presale</a></li>
+    <li><a href="#usecases">Use Cases</a></li>
+    <li><a href="#howto">How It Works</a></li>
+    <li><a href="#tokenomics">Tokenomics</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#tutorial">Tutorial</a></li>
+    <li><a href="#community">Community</a></li>
+  </ul>
+  <div style="display:flex;gap:0.75rem;align-items:center;">
+    <button id="walletBtn" class="btn btn-outline" onclick="openWalletModal()">Connect Wallet</button>
+    <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Launch Cucumverse</a>
   </div>
+</nav>
 
-  <!-- Points earned box -->
-  <div class="card points-box">
-    <div class="pts-label">Points This Hash</div>
-    <div class="pts-val" id="earnedDisplay">—</div>
-    <div class="pts-note" id="ptsNote">Complete hashing to earn points</div>
+<!-- WALLET MODAL -->
+<div class="wallet-overlay" id="walletOverlay">
+  <div class="wallet-modal">
+    <button class="wallet-close" onclick="closeWalletModal()">✕</button>
+    <h3>Connect Wallet</h3>
+    <p>Choose your wallet to connect. Phantom is recommended for Solana / Pump.fun.</p>
+    <div class="wallet-options">
+      <button class="wallet-option" onclick="connectPhantom()">
+        <img src="https://phantom.app/img/phantom-logo.png" alt="Phantom" onerror="this.src='https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'"/>
+        <div>
+          <div>Phantom</div>
+          <div class="wallet-desc">Solana · Recommended for Pump.fun</div>
+        </div>
+      </button>
+      <button class="wallet-option" onclick="connectMetaMask()">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask"/>
+        <div>
+          <div>MetaMask</div>
+          <div class="wallet-desc">Ethereum / EVM chains</div>
+        </div>
+      </button>
+    </div>
+    <div id="walletStatusMsg" class="wallet-status-msg"></div>
   </div>
-
-  <!-- Button -->
-  <button class="btn" id="hashBtn" onclick="startHash()">⛏ Start Hashing</button>
-
-  <div class="status-msg" id="statusMsg">Press start to begin</div>
-
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<!-- WALLET PROFILE PANEL -->
+<div class="wallet-panel-overlay" id="walletPanelOverlay" onclick="closeWalletPanel()"></div>
+<div class="wallet-panel" id="walletPanel">
+  <div class="wp-header">
+    <h3>My Wallet</h3>
+    <button class="wp-close" onclick="closeWalletPanel()">✕</button>
+  </div>
+
+  <div class="wp-address-box">
+    <div class="wp-address-label">Connected Address</div>
+    <div class="wp-address-val" id="wpAddress">—</div>
+    <span class="wp-address-copy" onclick="copyAddress()">⎘ Copy address</span>
+  </div>
+
+  <div class="wp-chain-badge" id="wpChainBadge">
+    <span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:blink 1.6s infinite;"></span>
+    <span id="wpChainLabel">—</span>
+  </div>
+
+  <!-- Native balance -->
+  <div class="wp-section-title">Native Balance</div>
+  <div class="wp-balance-row" id="wpNativeBalance">
+    <div class="wp-balance-token">
+      <span class="wp-balance-dot" style="background:var(--accent);"></span>
+      <div>
+        <div class="wp-balance-name" id="wpNativeName">—</div>
+        <div class="wp-balance-sub">Native token</div>
+      </div>
+    </div>
+    <div class="wp-balance-amount">
+      <div class="wp-balance-val" id="wpNativeVal">—</div>
+      <div class="wp-balance-usd" id="wpNativeUsd">—</div>
+    </div>
+  </div>
+
+  <!-- CCV Holdings -->
+  <div class="wp-section-title">CCV Presale Allocation</div>
+  <div class="wp-ccv-box">
+    <div class="wp-ccv-label">Cucumverse Token (CCV)</div>
+    <div class="wp-ccv-val" id="wpCcvVal">0 CCV</div>
+    <div class="wp-ccv-note" id="wpCcvNote">No CCV purchased yet in this session.</div>
+  </div>
+
+  <!-- Explorer link -->
+  <div class="wp-section-title">On-Chain</div>
+  <a id="wpExplorerLink" href="#" target="_blank" style="display:block;padding:0.75rem 1rem;background:var(--bg);border:1px solid var(--border);font-family:var(--mono);font-size:0.72rem;color:var(--accent);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+    ↗ View on Explorer
+  </a>
+
+  <button class="wp-disconnect" onclick="handleDisconnect()">Disconnect Wallet</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow-green"></div>
+  <div class="hero-glow-violet"></div>
+  
+  <div class="hero-left">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Pump.fun Multi-Wallet Trading Assistant
+    </div>
+    
+    <h1>
+      Trade the <span class="green">Verse</span><br/>
+      the <span class="violet">Cucumber</span> Way
+    </h1>
+    
+    <p class="hero-sub">
+      Control multiple wallets, fire bulk trades across all of them in a single execution, and run advanced strategies on Pump.fun — all from one Telegram bot. Built for traders who need speed, scale, and precision.
+    </p>
+    
+    <div class="hero-btns">
+      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Start on Telegram</a>
+      <a href="#howto" class="btn btn-outline">See How It Works</a>
+    </div>
+    
+    <div class="hero-tags">
+      <span class="hero-tag">Solana</span>
+      <span class="hero-tag">Pump.fun</span>
+      <span class="hero-tag">Multi-Wallet</span>
+      <span class="hero-tag">Bulk Execution</span>
+      <span class="hero-tag">Volume Maker</span>
+    </div>
+  </div>
+  
+  <div class="hero-right">
+    <img src="assets/cucumverselogo.png" alt="Cucumverse Robot Mascot"/>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat-item">
+    <span class="stat-num">10+</span>
+    <span class="stat-desc">Wallets Per Session</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">SOL</span>
+    <span class="stat-desc">Chain Supported</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">100%</span>
+    <span class="stat-desc">Telegram Native</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-num">24/7</span>
+    <span class="stat-desc">Automated Trading</span>
+  </div>
+</div>
+
+<!-- PRESALE -->
+<section id="presale" class="presale-section">
+  <div style="text-align:center;margin-bottom:3rem;">
+    <div class="section-tag" style="text-align:center;">Token Presale</div>
+    <h2 class="section-title" style="margin:0 auto 0.8rem;text-align:center;">Get <span style="color:var(--accent)">CCV</span> Before Launch</h2>
+    <p class="section-sub" style="margin:0 auto;text-align:center;">Secure your allocation now. Funds raised go directly to token creation and liquidity.</p>
+  </div>
+
+  <div class="presale-inner">
+
+    <!-- LEFT: Info -->
+    <div class="presale-info">
+      <div class="presale-token">
+        <img src="assets/cucumversetoken.png" alt="CCV Token"/>
+        <div>
+          <div class="presale-token-name">Cucumverse Token</div>
+          <div class="presale-token-ticker">$CCV · Solana</div>
+        </div>
+      </div>
+
+      <div class="presale-stats">
+        <div class="presale-stat">
+          <div class="presale-stat-label">Presale Supply</div>
+          <div class="presale-stat-val">150,000,000</div>
+        </div>
+        <div class="presale-stat">
+          <div class="presale-stat-label">Soft Cap</div>
+          <div class="presale-stat-val">$151,050</div>
+        </div>
+        <div class="presale-stat">
+          <div class="presale-stat-label">Tokens Sold</div>
+          <div class="presale-stat-val" id="tokensSoldDisplay">48,410,129</div>
+        </div>
+        <div class="presale-stat">
+          <div class="presale-stat-label">Raised (USD)</div>
+          <div class="presale-stat-val" id="raisedDisplay">$48,750</div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="presale-progress-wrap">
+        <div class="presale-progress-labels">
+          <span>$48,750</span><span>Soft Cap: $151,050</span>
+        </div>
+        <div class="presale-progress-bar">
+          <div class="presale-progress-fill" id="progressFill" style="width:32.27%"></div>
+        </div>
+        <div class="presale-progress-pct" id="progressPct">32.27% raised</div>
+      </div>
+
+      <!-- Countdown -->
+      <div style="margin-top:1.8rem;">
+        <div class="presale-rates-title">Presale Ends In</div>
+        <div class="presale-countdown">
+          <div class="countdown-block"><div class="countdown-num" id="cdDays">--</div><div class="countdown-label">Days</div></div>
+          <div class="countdown-block"><div class="countdown-num" id="cdHours">--</div><div class="countdown-label">Hours</div></div>
+          <div class="countdown-block"><div class="countdown-num" id="cdMins">--</div><div class="countdown-label">Mins</div></div>
+          <div class="countdown-block"><div class="countdown-num" id="cdSecs">--</div><div class="countdown-label">Secs</div></div>
+        </div>
+        <div class="countdown-ext" id="countdownExt"></div>
+      </div>
+
+      <!-- Rates -->
+      <div class="presale-rates">
+        <div class="presale-rates-title">Exchange Rates</div>
+        <div class="rate-row"><span>1 SOL</span><span>= 135,000 CCV</span></div>
+        <div class="rate-row"><span>1 ETH</span><span>= 5,064,000 CCV</span></div>
+        <div class="rate-row"><span>1 USDT</span><span>= 993 CCV</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Buy Box -->
+    <div>
+      <div class="presale-box">
+        <div class="presale-box-title">Buy CCV Tokens</div>
+
+        <div class="presale-tabs">
+          <button class="presale-tab active" onclick="switchTab('SOL',this)">SOL</button>
+          <button class="presale-tab" onclick="switchTab('ETH',this)">ETH</button>
+          <button class="presale-tab" onclick="switchTab('USDT',this)">USDT</button>
+        </div>
+
+        <div class="presale-input-wrap">
+          <input class="presale-input" id="amountInput" type="number" min="0" step="any" placeholder="0.00" oninput="calcReceive()"/>
+          <span class="presale-input-currency" id="currencyLabel">SOL</span>
+        </div>
+
+        <div class="presale-receive">
+          <span class="presale-receive-label">You receive</span>
+          <span class="presale-receive-val" id="receiveVal">0 CCV</span>
+        </div>
+
+        <button class="presale-buy-btn" id="buyBtn" onclick="handleBuy()">Connect Wallet to Buy</button>
+
+        <div class="presale-wallet-note" id="buyNote">Connect your wallet first, then enter an amount.</div>
+
+        <div class="presale-tx" id="presaleTx"></div>
+        <div class="presale-tx-err" id="presaleTxErr"></div>
+      </div>
+
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:1rem;font-family:var(--mono);line-height:1.7;">
+        ⚠️ This is a presale. $CCV token contract will be deployed after the fundraising goal is reached. All contributions are visible on-chain. No refunds once sent.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ACHIEVEMENT BADGES -->
+<div style="padding:3.5rem 5%;background:var(--bg);border-bottom:1px solid var(--border);overflow:hidden;">
+  <div style="display:flex;align-items:center;justify-content:center;gap:3rem;flex-wrap:wrap;">
+
+    <!-- Badge 1: Circle -->
+    <div class="badge-item">
+      <div class="badge-circle">
+        <div class="badge-circle-inner">
+          <span class="badge-top">#1</span>
+          <span class="badge-mid">MULTI-WALLET</span>
+          <span class="badge-bot">TRADING BOT</span>
+          <span class="badge-year">ON TELEGRAM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge 2: Diamond -->
+    <div class="badge-item">
+      <div class="badge-diamond">
+        <div class="badge-diamond-inner">
+          <span class="badge-top">#1</span>
+          <span style="font-size:0.55rem;color:var(--muted);letter-spacing:0.1em;">among</span>
+          <span class="badge-mid">PUMP.FUN</span>
+          <span class="badge-bot">BOT ASSISTANTS</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge 3: Hexagon -->
+    <div class="badge-item">
+      <div class="badge-hex">
+        <div class="badge-hex-inner">
+          <span style="font-size:0.55rem;color:#ff6b9d;letter-spacing:0.12em;font-family:var(--mono);">1st Ever</span>
+          <span class="badge-mid" style="color:#fff;font-size:0.72rem;">TOKEN DEPLOYER</span>
+          <span class="badge-bot" style="color:#ff6b9d;">BOT IN TELEGRAM</span>
+          <span class="badge-year" style="color:var(--muted);">2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badge 4: Hexagon green -->
+    <div class="badge-item">
+      <div class="badge-hex badge-hex-green">
+        <div class="badge-hex-inner">
+          <span class="badge-top">#1</span>
+          <span class="badge-mid">BULK TRADE</span>
+          <span class="badge-bot">EXECUTOR</span>
+          <span class="badge-year">SOLANA 2026</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .badge-item { display:flex; align-items:center; justify-content:center; }
+
+  /* Circle badge */
+  .badge-circle {
+    width:140px; height:140px; border-radius:50%;
+    border:2px solid var(--accent);
+    box-shadow:0 0 18px rgba(76,222,126,0.4), inset 0 0 18px rgba(76,222,126,0.08);
+    display:flex; align-items:center; justify-content:center;
+    background:var(--surface);
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+  .badge-circle-inner { text-align:center; display:flex; flex-direction:column; gap:0.1rem; padding:0.5rem; }
+
+  /* Diamond badge */
+  .badge-diamond {
+    width:130px; height:130px;
+    background:var(--surface);
+    border:2px solid var(--accent3);
+    box-shadow:0 0 18px rgba(123,97,255,0.4), inset 0 0 14px rgba(123,97,255,0.08);
+    transform:rotate(45deg);
+    display:flex; align-items:center; justify-content:center;
+    animation: badgePulse2 3s ease-in-out infinite;
+  }
+  .badge-diamond-inner {
+    transform:rotate(-45deg);
+    text-align:center; display:flex; flex-direction:column; gap:0.1rem; padding:0.5rem;
+  }
+
+  /* Hexagon badge */
+  .badge-hex {
+    width:140px; height:80px;
+    position:relative; background:var(--surface);
+    border-left:2px solid #ff6b9d; border-right:2px solid #ff6b9d;
+    box-shadow:0 0 18px rgba(255,107,157,0.35);
+    display:flex; align-items:center; justify-content:center;
+    animation: badgePulse3 3s ease-in-out infinite;
+  }
+  .badge-hex::before, .badge-hex::after {
+    content:''; position:absolute; left:-2px; right:-2px;
+    border-left:72px solid transparent; border-right:72px solid transparent;
+  }
+  .badge-hex::before { bottom:100%; border-bottom:28px solid #ff6b9d; }
+  .badge-hex::after  { top:100%;    border-top:28px solid #ff6b9d; }
+  .badge-hex-green {
+    border-color:var(--accent);
+    box-shadow:0 0 18px rgba(76,222,126,0.4);
+    animation: badgePulse 3s ease-in-out infinite;
+  }
+  .badge-hex-green::before { border-bottom-color:var(--accent); }
+  .badge-hex-green::after  { border-top-color:var(--accent); }
+  .badge-hex-inner { text-align:center; display:flex; flex-direction:column; gap:0.1rem; z-index:1; }
+
+  /* Text styles */
+  .badge-top  { font-family:var(--mono); font-size:1.3rem; font-weight:700; color:var(--accent); line-height:1; }
+  .badge-mid  { font-family:var(--mono); font-size:0.6rem; font-weight:700; color:var(--accent2); letter-spacing:0.1em; }
+  .badge-bot  { font-family:var(--mono); font-size:0.55rem; color:var(--muted); letter-spacing:0.08em; }
+  .badge-year { font-family:var(--mono); font-size:0.6rem; color:var(--accent); letter-spacing:0.1em; margin-top:0.15rem; }
+
+  @keyframes badgePulse  { 0%,100%{box-shadow:0 0 18px rgba(76,222,126,0.4),inset 0 0 18px rgba(76,222,126,0.08)} 50%{box-shadow:0 0 30px rgba(76,222,126,0.65),inset 0 0 24px rgba(76,222,126,0.12)} }
+  @keyframes badgePulse2 { 0%,100%{box-shadow:0 0 18px rgba(123,97,255,0.4),inset 0 0 14px rgba(123,97,255,0.08)} 50%{box-shadow:0 0 30px rgba(123,97,255,0.65),inset 0 0 20px rgba(123,97,255,0.12)} }
+  @keyframes badgePulse3 { 0%,100%{box-shadow:0 0 18px rgba(255,107,157,0.35)} 50%{box-shadow:0 0 30px rgba(255,107,157,0.6)} }
+
+  @media(max-width:700px) { .badge-item { transform:scale(0.85); } }
+</style>
+
+<!-- USE CASES -->
+<section id="usecases" class="usecases-section">
+  <div class="section-tag">Use Cases</div>
+  <h2 class="section-title">Built for Creators & Traders</h2>
+  <p class="section-sub">Whether you're launching a token or trading one, Cucumverse has a strategy for you.</p>
+  <div class="usecases-grid">
+    <div class="usecase-card green">
+      <div class="usecase-label">For Token Creators</div>
+      <h3>Shape Your Market</h3>
+      <ul class="usecase-list">
+        <li>👛 Manage multiple wallets</li>
+        <li>🧺 Bundle buy across wallets</li>
+        <li>🎯 Stealth sniper</li>
+        <li>📈 Volume maker</li>
+      </ul>
+      <div class="benefit-box">Bulk buy across multiple wallets simultaneously, drive initial volume, boost token visibility, and shape market perception — all in a single execution.</div>
+      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green">Get Started</a>
+    </div>
+    <div class="usecase-card violet">
+      <div class="usecase-label">For Token Buyers / Traders</div>
+      <h3>Execute With Precision</h3>
+      <ul class="usecase-list">
+        <li>👛 Manage multiple wallets</li>
+        <li>🧺 Bundle buy across wallets</li>
+        <li>🎯 Stealth sniper</li>
+        <li>📈 Volume maker</li>
+      </ul>
+      <div class="benefit-box">Manage multiple wallets, execute bulk trades across all of them in one go, and run complex multi-wallet strategies with full precision and control.</div>
+      <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-violet">Start Trading</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Check it out and start trading:<br/>with the <span class="green">Cucum</span><span class="violet">verse</span> Bot?</h2>
+  <p>Set up in minutes. No coding needed. Control multiple wallets, execute bulk trades across all of them simultaneously, and run advanced strategies — all from Telegram.</p>
+  <div class="cta-btns">
+    <a href="https://pump.fun/" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Find a token on PumpFun</a>
+    <a href="https://t.me/cucumverse_bot" target="_blank" class="btn btn-green" style="font-size:0.9rem;width:260px;text-align:center;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;">Launch Cucumverse</a>
+  </div>
+  <div class="cta-btns" style="margin-top:1rem;">
+    <a href="#howto" class="btn btn-outline" style="padding:1rem 2.5rem;font-size:0.9rem;">How It Works</a>
+  </div>
+</section>
+
+<!-- TRENDING TOKENS SECTION -->
+<section style="padding: 3rem 5%; background: var(--bg);">
+  <div style="margin-bottom: 1.5rem;">
+    <div class="section-tag">Live From Pump.fun</div>
+    <h2 class="section-title">Trending Tokens</h2>
+  </div>
+  
+  <div id="tokenGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+    <!-- 4 tokens will be displayed here -->
+  </div>
+</section>
+
+<style>
+  .token-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .token-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(76, 222, 126, 0.15);
+  }
+  .token-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .token-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .token-name {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .token-ticker {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+  .token-mc {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  
+  @media(max-width: 1200px) {
+    #tokenGrid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media(max-width: 768px) {
+    #tokenGrid { grid-template-columns: 1fr; }
+  }
+</style>
+
 <script>
-  const tg     = window.Telegram.WebApp;
-  tg.ready();
-  tg.expand();
-
-  const BOT_API  = 'https://ccvairdropbot-production.up.railway.app';
-  const chatId   = tg.initDataUnsafe?.user?.id || null;
-  let   workers  = [];
-  let   chunk    = null;
-  let   busy     = false;
-  let   totalPts = 0;
-  let   workersDone = 0;
-  let   numCores = 1;
-
-  document.getElementById('userChatId').textContent = chatId || 'Unknown';
-
-  async function init() {
-    numCores = navigator.hardwareConcurrency || 4;
-    if (!chatId) { setStatus('Could not identify Telegram account.', true); return; }
-    try {
-      const r    = await fetch(`${BOT_API}/hash/state?chatId=${chatId}`);
-      const data = await r.json();
-      totalPts   = data.totalPoints || 0;
-      document.getElementById('userPoints').textContent = totalPts.toLocaleString();
-      const lim = data.limit || 3;
-      const rem = data.remaining || 0;
-      setStatus(`Hashes remaining today: ${rem}/${lim}${data.upgraded ? ' ⚡' : ''} · Cores: ${numCores}`);
-      if (rem <= 0) {
-        document.getElementById('hashBtn').disabled = true;
-        setStatus(`Daily limit reached (${lim}/${lim}). Come back tomorrow!`);
-      }
-    } catch(e) {
-      setStatus('Could not connect to server.', true);
+  let currentPage = 0;
+  const tokensPerPage = 4;
+  
+  // Your 16 specific tokens with attractive placeholders
+  const allTokens = [
+    { 
+      name: "Solana Wizard", 
+      ticker: "WIZARD", 
+      mc: "$95.2M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=wizard&backgroundColor=4cde7e,7b61ff&scale=80",
+      url: "https://pump.fun/coin/2qEHjDLDLbuBgRYvsxhc5D6uDWAivNFZGan56P1tpump"
+    },
+    { 
+      name: "Moon Rocket", 
+      ticker: "ROCKET", 
+      mc: "$87.5M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=rocket&backgroundColor=ff6b9d,ffd93d&scale=80",
+      url: "https://pump.fun/coin/CeCQXt8CNdH9UQVQqLj4yZu74wjugMmnq9nQ5TqGpump"
+    },
+    { 
+      name: "Diamond Hands", 
+      ticker: "DIAMOND", 
+      mc: "$76.8M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=diamond&backgroundColor=4ecdc4,95e1d3&scale=80",
+      url: "https://pump.fun/coin/8J69rbLTzWWgUJziFY8jeu5tDwEPBwUz4pKBMr5rpump"
+    },
+    { 
+      name: "Crypto King", 
+      ticker: "KING", 
+      mc: "$68.3M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=king&backgroundColor=f38181,aa96da&scale=80",
+      url: "https://pump.fun/coin/9AvytnUKsLxPxFHFqS6VLxaxt5p6BhYNr53SD2Chpump"
+    },
+    { 
+      name: "Degen Ape", 
+      ticker: "APE", 
+      mc: "$92.1M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=ape&backgroundColor=4cde7e,6bcf7f&scale=80",
+      url: "https://pump.fun/coin/8XtRWb4uAAJFMP4QQhoYYCWR6XXb7ybcCdiqPwz9s5WS"
+    },
+    { 
+      name: "Pepe Coin", 
+      ticker: "PEPE", 
+      mc: "$81.7M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=pepe&backgroundColor=a8e6cf,dcedc1&scale=80",
+      url: "https://pump.fun/coin/GHichsGq8aPnqJyz6Jp1ASTK4PNLpB5KrD6XrfDjpump"
+    },
+    { 
+      name: "Shiba Galaxy", 
+      ticker: "SHIB", 
+      mc: "$73.4M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=shiba&backgroundColor=ff6b6b,feca57&scale=80",
+      url: "https://pump.fun/coin/DKu9kykSfbN5LBfFXtNNDPaX35o4Fv6vJ9FKk7pZpump"
+    },
+    { 
+      name: "Doge Warriors", 
+      ticker: "DOGE", 
+      mc: "$65.9M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=doge&backgroundColor=48dbfb,0abde3&scale=80",
+      url: "https://pump.fun/coin/2nP9yKQNSGQy851iyawDvBkzkK2R2aqKArQCKc2gpump"
+    },
+    { 
+      name: "Floki Inu", 
+      ticker: "FLOKI", 
+      mc: "$88.2M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=floki&backgroundColor=ee5a6f,f29494&scale=80",
+      url: "https://pump.fun/coin/5UUH9RTDiSpq6HKS6bp4NdU9PNJpXRXuiw6ShBTBhgH2"
+    },
+    { 
+      name: "Baby Doge", 
+      ticker: "BABYDOGE", 
+      mc: "$79.5M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=babydoge&backgroundColor=c7ecee,686de0&scale=80",
+      url: "https://pump.fun/coin/FeR8VBqNRSUD5NtXAj2n3j1dAHkZHfyDktKuLXD4pump"
+    },
+    { 
+      name: "Safemoon V2", 
+      ticker: "SAFE", 
+      mc: "$71.8M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=safe&backgroundColor=4cde7e,22a6b3&scale=80",
+      url: "https://pump.fun/coin/9PR7nCP9DpcUotnDPVLUBUZKu5WAYkwrCUx9wDnSpump"
+    },
+    { 
+      name: "Bonk Inu", 
+      ticker: "BONK", 
+      mc: "$63.2M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=bonk&backgroundColor=f9ca24,f0932b&scale=80",
+      url: "https://pump.fun/coin/ArUyEVWGCzZMtAxcPmNH8nDFZ4kMjxrMbpsQf3NEpump"
+    },
+    { 
+      name: "Pippin", 
+      ticker: "PIPPIN", 
+      mc: "$348.0M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=pippin&backgroundColor=eb4d4b,6c5ce7&scale=80",
+      url: "https://pump.fun/coin/Dfh5DzRgSvvCFDoYc2ciTkMrbDfRKybA4SoFbPmApump"
+    },
+    { 
+      name: "Fartcoin", 
+      ticker: "FART", 
+      mc: "$155.9M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=fart&backgroundColor=a29bfe,fd79a8&scale=80",
+      url: "https://pump.fun/coin/9BB6NFEcjBCtnNLFko2FqVQBq8HHM13kCyYcdQbgpump"
+    },
+    { 
+      name: "RTP Token", 
+      ticker: "RTP", 
+      mc: "$140.7M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=rtp&backgroundColor=4cde7e,74b9ff&scale=80",
+      url: "https://pump.fun/coin/ED5nyyWEzpPPiWimP8vYm7sD7TD3LAt3Q3gRTWHzPJBY"
+    },
+    { 
+      name: "Comedian", 
+      ticker: "BAN", 
+      mc: "$108.9M",
+      img: "https://api.dicebear.com/7.x/shapes/svg?seed=banana&backgroundColor=ffd93d,fcbf49&scale=80",
+      url: "https://pump.fun/coin/a3W4qutoEJA4232T2gwZUfgYJTetr96pU4SJMwppump"
     }
+  ];
+
+  function renderTokens() {
+    const grid = document.getElementById('tokenGrid');
+    const start = currentPage * tokensPerPage;
+    const end = start + tokensPerPage;
+    const tokensToShow = allTokens.slice(start, end);
+    
+    grid.innerHTML = tokensToShow.map(token => `
+      <a href="${token.url}" target="_blank" class="token-card">
+        <img 
+          src="${token.img}" 
+          alt="${token.name}" 
+          class="token-img" 
+          onerror="this.src='https://via.placeholder.com/60/4cde7e/060d0a?text=${encodeURIComponent(token.ticker)}'"
+        />
+        <div class="token-info">
+          <div class="token-name">${token.name}</div>
+          <div class="token-ticker">${token.ticker}</div>
+          <div class="token-mc">MC: ${token.mc}</div>
+        </div>
+      </a>
+    `).join('');
   }
 
-  async function startHash() {
-    if (busy || !chatId) return;
-    busy = true;
-    workersDone = 0;
-    workers.forEach(w => w.terminate());
-    workers = [];
-
-    const btn = document.getElementById('hashBtn');
-    btn.disabled = true;
-    document.getElementById('earnedDisplay').textContent = '—';
-    document.getElementById('ptsNote').textContent = 'Hashing in progress...';
-    setStatus('Assigning key range...');
-
-    try {
-      const r    = await fetch(`${BOT_API}/hash/assign`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chatId })
-      });
-      const data = await r.json();
-      if (!data.ok) { setStatus(data.error || 'Failed.', true); busy = false; btn.disabled = false; return; }
-
-      chunk = data;
-      const start     = BigInt(data.start);
-      const chunkSize = BigInt(data.chunkSize);
-      const perCore   = chunkSize / BigInt(numCores);
-
-      setStatus(`Hashing on ${numCores} core(s)...`);
-      document.getElementById('rangeStart').textContent = data.start.slice(0,14) + '...';
-      document.getElementById('rowRange').style.display = 'flex';
-
-      const progress = new Array(numCores).fill(0);
-
-      for (let i = 0; i < numCores; i++) {
-        const wStart = start + BigInt(i) * perCore;
-        const wEnd   = i === numCores - 1 ? start + chunkSize : wStart + perCore;
-
-        const w = new Worker('worker.js');
-        workers.push(w);
-
-        w.postMessage({
-          startDecimal: wStart.toString(),
-          endDecimal:   wEnd.toString(),
-          target:       data.target,
-          workerId:     i
-        });
-
-        w.onmessage = async (e) => {
-          const msg = e.data;
-
-          if (msg.type === 'progress') {
-            progress[msg.workerId] = msg.pct;
-            const avg = Math.floor(progress.reduce((a,b) => a+b, 0) / numCores);
-            updateProgress(avg, msg.currentKey);
-          }
-
-          if (msg.type === 'found') {
-            workers.forEach(w => w.terminate());
-            workers = [];
-            updateProgress(100, msg.decimal);
-            await submitResult({ found: true, key: msg.key, h160: msg.h160 });
-          }
-
-          if (msg.type === 'done') {
-            workersDone++;
-            progress[msg.workerId] = 100;
-            const avg = Math.floor(progress.reduce((a,b) => a+b, 0) / numCores);
-            updateProgress(avg, '');
-            if (workersDone === numCores) {
-              workers.forEach(w => w.terminate());
-              workers = [];
-              await submitResult({ found: false, key: null, h160: null });
-            }
-          }
-
-          if (msg.type === 'error') {
-            setStatus('Worker error: ' + msg.msg, true);
-            busy = false; btn.disabled = false;
-          }
-        };
-      }
-    } catch(err) {
-      setStatus('Error: ' + err.message, true);
-      busy = false;
-      document.getElementById('hashBtn').disabled = false;
+  // Initial render
+  renderTokens();
+  
+  // Auto-rotate every 15 seconds
+  setInterval(() => {
+    if ((currentPage + 1) * tokensPerPage < allTokens.length) {
+      currentPage++;
+    } else {
+      currentPage = 0;
     }
-  }
-
-  function updateProgress(pct, currentKey) {
-    document.getElementById('barFill').style.width = pct + '%';
-    document.getElementById('pctLabel').textContent = pct + '%';
-    document.getElementById('pctDisplay').textContent = pct + '%';
-    if (currentKey) document.getElementById('hashScroll').textContent = currentKey;
-  }
-
-  async function submitResult(result) {
-    setStatus('Submitting result...');
-    try {
-      const r    = await fetch(`${BOT_API}/hash/complete`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chatId,
-          start:     chunk.start,
-          found:     result.found,
-          foundKey:  result.key  || null,
-          foundH160: result.h160 || null,
-          initData:  tg.initData
-        })
-      });
-      const data = await r.json();
-      if (!data.ok) { setStatus(data.error || 'Submission failed.', true); busy = false; return; }
-
-      totalPts = data.totalPoints || (totalPts + data.earned);
-      document.getElementById('earnedDisplay').textContent = '+' + data.earned;
-      document.getElementById('ptsNote').textContent = 'Points awarded!';
-      document.getElementById('userPoints').textContent = totalPts.toLocaleString();
-      setStatus(`Done! Hashes remaining: ${data.remaining}/${data.limit || 3}`);
-      if (data.remaining <= 0) {
-        document.getElementById('hashBtn').disabled = true;
-        document.getElementById('hashBtn').textContent = '✅ Done for today';
-      } else {
-        document.getElementById('hashBtn').disabled = false;
-        document.getElementById('hashBtn').textContent = '⛏ Hash Again';
-      }
-      busy = false;
-    } catch(err) {
-      setStatus('Submit error: ' + err.message, true);
-      busy = false;
-    }
-  }
-
-  function setStatus(msg, isErr) {
-    const el = document.getElementById('statusMsg');
-    el.textContent = msg;
-    el.className = 'status-msg' + (isErr ? ' err' : '');
-  }
-
-  init();
+    renderTokens();
+  }, 15000); // 15 seconds
 </script>
+
+<!-- HOW IT WORKS -->
+<section id="howto">
+  <div class="section-tag">Step-by-Step</div>
+  <h2 class="section-title">Get Started in Minutes</h2>
+  <p class="section-sub">No technical setup needed. Just open Telegram and follow these steps.</p>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <h3>Open the Bot</h3>
+      <p>Launch Telegram, search for <strong>@cucumverse_bot</strong>, and tap <strong>/start</strong> to initialize. The bot will greet you with wallet options.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <h3>Create or Import Main Wallet</h3>
+      <p>Create a fresh wallet or import your existing one using your private key. This becomes your main wallet — the source of all funds.</p>
+      <div class="step-tip">⚠️ Never share your private key with anyone.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <h3>Generate Bot Wallets</h3>
+      <p>Choose how many bot wallets to generate. Each wallet acts as an independent buyer. The bot provides a downloadable <strong>.txt backup file</strong> — save it in case of crashes or accidental deletion.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <h3>Distribute SOL to Bot Wallets</h3>
+      <p>Send SOL from your main wallet to all bot wallets in one action. For example: distribute <strong>0.5 SOL across 10 wallets</strong> = 0.05 SOL each. Check wallet balances anytime from the bot.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">05</div>
+      <h3>Configure Trading Settings</h3>
+      <p>Set your trading parameters before launching: <strong>Slippage</strong> (e.g. 10% for faster fills), <strong>Min Buy</strong> (e.g. 0.01 SOL), <strong>Max Buy</strong> (e.g. 0.035 SOL), and <strong>Sell Percent</strong> — the profit % at which bots auto-sell. Always leave enough SOL per wallet for gas fees.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">06</div>
+      <h3>Start Trading</h3>
+      <p>Hit <strong>Start Trading</strong>. The bot will ask you to paste a token contract address. Find a token on PumpFun, copy its address, and paste it — all bot wallets execute buys simultaneously, instantly.</p>
+      <div class="step-tip">✅ Non-sniper execution — undetectable on PumpFun.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">07</div>
+      <h3>Monitor Your Positions</h3>
+      <p>View all bot wallet balances and token holdings from the bot at any time. Check the live token price and info of the token you're trading directly within the bot.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">08</div>
+      <h3>Sell & Collect Profits</h3>
+      <p>Bots auto-sell at your set profit percentage, or you can trigger a manual sell across all wallets at once. Volume pumps, profits collect — all from one Telegram command.</p>
+      <div class="step-tip">🚀 Works for your own token or any PumpFun token.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKENOMICS -->
+<section id="tokenomics" style="padding:5.5rem 5%; background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="section-tag">Tokenomics</div>
+  <h2 class="section-title">CCV Token Allocation</h2>
+  <p class="section-sub">1,000,000,000 total supply — distributed across key areas to ensure long-term sustainability.</p>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center; max-width:1000px;">
+
+    <!-- Pie Chart (CSS) -->
+    <div style="display:flex; flex-direction:column; align-items:center; gap:1.5rem;">
+      <div style="position:relative; width:240px; height:240px;">
+        <svg viewBox="0 0 36 36" style="width:240px;height:240px;transform:rotate(-90deg);">
+          <!-- Presale 30% -->
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#4cde7e" stroke-width="3.5"
+            stroke-dasharray="30 70" stroke-dashoffset="0"/>
+          <!-- Liquidity 30% -->
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#7b61ff" stroke-width="3.5"
+            stroke-dasharray="30 70" stroke-dashoffset="-30"/>
+          <!-- Dev & Team 5% -->
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#ff6b9d" stroke-width="3.5"
+            stroke-dasharray="5 95" stroke-dashoffset="-60"/>
+          <!-- Airdrop 10% -->
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#ffd93d" stroke-width="3.5"
+            stroke-dasharray="10 90" stroke-dashoffset="-65"/>
+          <!-- Marketing 20% -->
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#48dbfb" stroke-width="3.5"
+            stroke-dasharray="20 80" stroke-dashoffset="-75"/>
+          <!-- Ecosystem 5% -->
+          <circle cx="18" cy="18" r="15.915" fill="none" stroke="#ff9f43" stroke-width="3.5"
+            stroke-dasharray="5 95" stroke-dashoffset="-95"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);">Total</span>
+          <span style="font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--accent);">1B CCV</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;flex-direction:column;gap:0.85rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem;background:var(--bg);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="width:12px;height:12px;border-radius:2px;background:#4cde7e;flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;">Presale</div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">300,000,000 CCV · Locked until TGE</div>
+          </div>
+        </div>
+        <span style="font-family:var(--mono);font-size:0.9rem;color:#4cde7e;font-weight:700;">30%</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem;background:var(--bg);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="width:12px;height:12px;border-radius:2px;background:#7b61ff;flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;">Liquidity (Locked)</div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">300,000,000 CCV · LP locked 12 months</div>
+          </div>
+        </div>
+        <span style="font-family:var(--mono);font-size:0.9rem;color:#7b61ff;font-weight:700;">30%</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem;background:var(--bg);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="width:12px;height:12px;border-radius:2px;background:#ff6b9d;flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;">Dev & Team</div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">50,000,000 CCV · 6-month vesting</div>
+          </div>
+        </div>
+        <span style="font-family:var(--mono);font-size:0.9rem;color:#ff6b9d;font-weight:700;">5%</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem;background:var(--bg);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="width:12px;height:12px;border-radius:2px;background:#ffd93d;flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;">Airdrop</div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">100,000,000 CCV · Community rewards</div>
+          </div>
+        </div>
+        <span style="font-family:var(--mono);font-size:0.9rem;color:#ffd93d;font-weight:700;">10%</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem;background:var(--bg);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="width:12px;height:12px;border-radius:2px;background:#48dbfb;flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;">Marketing</div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">200,000,000 CCV · Growth & partnerships</div>
+          </div>
+        </div>
+        <span style="font-family:var(--mono);font-size:0.9rem;color:#48dbfb;font-weight:700;">20%</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1rem;background:var(--bg);border:1px solid var(--border);">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="width:12px;height:12px;border-radius:2px;background:#ff9f43;flex-shrink:0;"></span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:700;">Ecosystem & Rewards</div>
+            <div style="font-size:0.72rem;color:var(--muted);font-family:var(--mono);">50,000,000 CCV · Staking & incentives</div>
+          </div>
+        </div>
+        <span style="font-family:var(--mono);font-size:0.9rem;color:#ff9f43;font-weight:700;">5%</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" style="padding:5.5rem 5%; background:var(--bg); border-bottom:1px solid var(--border);">
+  <div class="section-tag">Roadmap</div>
+  <h2 class="section-title">Where We're Going</h2>
+  <p class="section-sub">A phased rollout built for longevity — from presale to full multi-chain ecosystem.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:1rem;">
+
+    <!-- Phase 1 -->
+    <div style="background:var(--bg);padding:2rem;position:relative;">
+      <div style="font-family:var(--mono);font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Phase 1</div>
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:0.3rem;">Bot Launch</div>
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.2rem;">Feb 2026</div>
+      <div style="display:inline-block;padding:0.2rem 0.7rem;background:rgba(76,222,126,0.12);border:1px solid rgba(76,222,126,0.3);font-family:var(--mono);font-size:0.65rem;color:var(--accent);margin-bottom:1.2rem;">✅ Completed</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Cucumverse Bot live on Telegram</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Multi-wallet management</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Bulk buy execution on Pump.fun</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Website & community launch</li>
+      </ul>
+    </div>
+
+    <!-- Phase 2 -->
+    <div style="background:var(--bg);padding:2rem;border-left:1px solid var(--border);">
+      <div style="font-family:var(--mono);font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Phase 2</div>
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:0.3rem;">Bot Upgrade & Token Deploy</div>
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.2rem;">March 2026</div>
+      <div style="display:inline-block;padding:0.2rem 0.7rem;background:rgba(76,222,126,0.12);border:1px solid rgba(76,222,126,0.3);font-family:var(--mono);font-size:0.65rem;color:var(--accent);margin-bottom:1.2rem;">✅ Completed</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Bot performance upgrades</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>CCV token contract deployed</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Tokenomics finalized</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Liquidity pool created & locked</li>
+      </ul>
+    </div>
+
+    <!-- Phase 3 -->
+    <div style="background:var(--bg);padding:2rem;border-left:1px solid var(--border);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);"></div>
+      <div style="font-family:var(--mono);font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Phase 3</div>
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:0.3rem;">Airdrop & Presale</div>
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.2rem;">April 2026</div>
+      <div style="display:inline-block;padding:0.2rem 0.7rem;background:rgba(76,222,126,0.12);border:1px solid rgba(76,222,126,0.3);font-family:var(--mono);font-size:0.65rem;color:var(--accent);margin-bottom:1.2rem;">🔥 Live Now</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>CCV presale open (soft cap)</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Airdrop to early supporters</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Community growth campaign</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>CEX listing pursuit begins</li>
+      </ul>
+    </div>
+
+    <!-- Phase 4 — Future Upgrades -->
+    <div style="background:var(--bg);padding:2rem;border-left:1px solid var(--border);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent3),var(--accent));"></div>
+      <div style="font-family:var(--mono);font-size:0.68rem;color:var(--accent3);text-transform:uppercase;letter-spacing:0.15em;margin-bottom:0.5rem;">Phase 4</div>
+      <div style="font-size:1.05rem;font-weight:800;margin-bottom:0.3rem;">Future Upgrades</div>
+      <div style="font-family:var(--mono);font-size:0.7rem;color:var(--muted);margin-bottom:1.2rem;">2026 & Beyond</div>
+      <div style="display:inline-block;padding:0.2rem 0.7rem;background:rgba(123,97,255,0.1);border:1px solid rgba(123,97,255,0.3);font-family:var(--mono);font-size:0.65rem;color:var(--accent3);margin-bottom:1.2rem;">🚀 Planned</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;">
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;">
+          <span style="position:absolute;left:0;color:var(--accent3);">·</span>
+          <span style="color:var(--accent2);font-weight:600;">Bonk.fun Integration</span> — multi-wallet support on Bonk.fun launchpad
+        </li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;">
+          <span style="position:absolute;left:0;color:var(--accent3);">·</span>
+          <span style="color:var(--accent2);font-weight:600;">Four.meme Integration</span> — multi-wallet support on BNB meme launchpad
+        </li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent3);">·</span>Cross-chain bulk execution</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent3);">·</span>AI-assisted trading strategies</li>
+        <li style="font-size:0.83rem;color:var(--muted);padding-left:1rem;position:relative;"><span style="position:absolute;left:0;color:var(--accent3);">·</span>CCV token utility in-bot</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- TUTORIAL VIDEO -->
+<section id="tutorial" style="padding:5rem 5%; text-align:center; background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="section-tag" style="text-align:center;">Video Tutorial</div>
+  <h2 class="section-title" style="margin-bottom:0.75rem; text-align:center; margin-left:auto; margin-right:auto;">Watch the Full Guide</h2>
+  <p class="section-sub" style="margin-bottom:2.5rem; text-align:center; max-width:600px; margin-left:auto; margin-right:auto;">See exactly how to set up and use the Cucumverse Bot — step by step, from start to first trade.</p>
+  <div style="position:relative; max-width:860px; margin:0 auto; border-radius:12px; overflow:hidden; border:1px solid var(--border); box-shadow:0 0 60px rgba(76,222,126,0.12);">
+    <div style="position:relative; padding-bottom:56.25%; height:0;">
+      <iframe
+        src="https://www.youtube.com/embed/leMrZIBtKck"
+        title="Cucumverse Bot Tutorial | Pump.fun Multi Wallet Trading Bot (Full Guide)"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        style="position:absolute; top:0; left:0; width:100%; height:100%;">
+      </iframe>
+    </div>
+  </div>
+  <p style="margin-top:1.5rem; font-size:0.9rem; color:var(--muted); font-family:var(--mono);">
+    ▶ <a href="https://www.youtube.com/watch?v=leMrZIBtKck" target="_blank" style="color:var(--accent); text-decoration:underline;">Watch on YouTube</a> &nbsp;•&nbsp; 
+    <a href="https://youtube.com/@cucumverse" target="_blank" style="color:var(--accent); text-decoration:underline;">Subscribe @cucumverse</a>
+  </p>
+</section>
+
+<!-- COMING SOON NOTICE -->
+<div class="notice">
+  <strong>🔜 Coming Soon:</strong> Support for <strong>BNB Chain</strong>, <strong>Ethereum</strong>, and <strong>Base</strong> wallets — expanding the verse beyond Solana.
+</div>
+
+<!-- SOCIAL MEDIA SECTION -->
+<section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 3rem 5%; text-align: center;">
+  <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--accent2);">Join the Cucumverse Community</h3>
+  <div style="display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+    
+    <!-- X (Twitter) -->
+    <a href="https://x.com/cucumverse" target="_blank" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      <span style="font-size: 0.8rem; color: var(--muted); font-family: var(--mono);">X (Twitter)</span>
+    </a>
+    
+    <!-- Telegram Channel -->
+    <a href="https://t.me/cucumverse_bot" target="_blank" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+      </svg>
+      <span style="font-size: 0.8rem; color: var(--muted); font-family: var(--mono);">TG Channel</span>
+    </a>
+    
+    <!-- YouTube -->
+    <a href="https://www.youtube.com/@cucumverse" target="_blank" style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; padding: 1rem; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--accent)" xmlns="http://www.w3.org/2000/svg">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+      <span style="font-size: 0.8rem; color: var(--muted); font-family: var(--mono);">YouTube</span>
+    </a>
+    
+  </div>
+</section>
+
+
+<!-- WEB3 PARTNERS -->
+<section style="padding:5rem 5%;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+  <div style="max-width:960px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:2.5rem;">
+      <div class="section-tag" style="text-align:center;">Ecosystem</div>
+      <h2 style="font-size:clamp(1.4rem,2.5vw,2rem);font-weight:800;letter-spacing:-0.02em;color:var(--accent);">Web3 Partners</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;">
+
+      <a href="https://pump.fun" target="_blank" class="partner-cell">
+        <img src="https://pump.fun/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Pump.fun</span>
+      </a>
+      <a href="https://raydium.io" target="_blank" class="partner-cell">
+        <img src="https://raydium.io/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Raydium</span>
+      </a>
+      <a href="https://jup.ag" target="_blank" class="partner-cell">
+        <img src="https://jup.ag/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Jupiter</span>
+      </a>
+      <a href="https://solscan.io" target="_blank" class="partner-cell">
+        <img src="https://solscan.io/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Solscan</span>
+      </a>
+      <a href="https://bonk.fun" target="_blank" class="partner-cell">
+        <img src="https://bonk.fun/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Bonk.fun</span>
+      </a>
+      <a href="https://four.meme" target="_blank" class="partner-cell">
+        <img src="https://four.meme/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Four.meme</span>
+      </a>
+      <a href="https://phantom.app" target="_blank" class="partner-cell">
+        <img src="https://phantom.app/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Phantom Wallet</span>
+      </a>
+      <a href="https://sentix.io" target="_blank" class="partner-cell">
+        <img src="https://sentix.io/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name" style="font-style:italic;letter-spacing:-0.02em;">sentix</span>
+      </a>
+      <a href="https://safetrading.today" target="_blank" class="partner-cell">
+        <img src="https://safetrading.today/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">Safetrading</span>
+      </a>
+      <a href="https://coincarp.com" target="_blank" class="partner-cell">
+        <img src="https://coincarp.com/favicon.ico" class="partner-logo" onerror="this.style.display='none'"/>
+        <span class="partner-name">CoinCarp</span>
+      </a>
+
+    </div>
+
+    <!-- CertiK Audit Badge -->
+    <div style="margin-top:2rem;border:1px solid rgba(255,209,61,0.3);background:rgba(255,209,61,0.04);padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;border-radius:4px;">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <img src="https://www.certik.com/favicon.ico" style="width:36px;height:36px;object-fit:contain;border-radius:4px;opacity:0.7;" onerror="this.style.display='none'"/>
+        <div>
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <div style="font-size:1rem;font-weight:800;color:var(--accent2);">CertiK Audit</div>
+            <span style="font-family:var(--mono);font-size:0.65rem;padding:0.2rem 0.6rem;background:rgba(255,209,61,0.12);border:1px solid rgba(255,209,61,0.35);color:#ffd93d;">⏳ IN PROGRESS</span>
+          </div>
+          <div style="font-family:var(--mono);font-size:0.72rem;color:var(--muted);margin-top:0.2rem;">Smart contract audit by CertiK is currently underway</div>
+        </div>
+      </div>
+      <a href="https://www.certik.com" target="_blank" style="font-family:var(--mono);font-size:0.72rem;color:#ffd93d;border:1px solid rgba(255,209,61,0.3);padding:0.5rem 1.2rem;white-space:nowrap;transition:background 0.2s;text-decoration:none;" onmouseover="this.style.background='rgba(255,209,61,0.08)'" onmouseout="this.style.background='transparent'">Learn More ↗</a>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  .partner-cell {
+    display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+    padding: 1.8rem 1rem; background: var(--bg);
+    text-decoration: none; transition: background 0.2s;
+  }
+  .partner-cell:hover { background: #0b160e; }
+  .partner-logo { width: 28px; height: 28px; object-fit: contain; border-radius: 4px; }
+  .partner-name { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+  .partner-cell:hover .partner-name { color: var(--accent); }
+  .partner-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+</style>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">
+    <img src="assets/cucumverselogo.png" alt="Cucumverse Logo"/>
+    Cucumverse
+  </div>
+  <p>© 2026 Cucumverse. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // --- Wallet Connect Logic ---
+  let connectedWallet = null;
+  let connectedType = null;
+
+  function truncate(addr) {
+    return addr.slice(0, 4) + '...' + addr.slice(-4);
+  }
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('walletStatusMsg');
+    el.textContent = msg;
+    el.className = 'wallet-status-msg ' + (type || '');
+  }
+
+  function openWalletModal() {
+    if (connectedWallet) {
+      if (confirm('Disconnect ' + truncate(connectedWallet) + '?')) disconnectWallet();
+      return;
+    }
+    setStatus('', '');
+    document.getElementById('walletOverlay').classList.add('open');
+  }
+
+  function closeWalletModal() {
+    document.getElementById('walletOverlay').classList.remove('open');
+  }
+
+  // Close only when clicking the dark backdrop itself, not children
+  document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById('walletOverlay').addEventListener('click', function (e) {
+      if (e.target === this) closeWalletModal();
+    });
+  });
+
+  function setConnected(address, type) {
+    connectedWallet = address;
+    connectedType = type;
+    var btn = document.getElementById('walletBtn');
+    btn.className = 'wallet-connected';
+    btn.innerHTML =
+      '<span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;animation:blink 1.6s infinite;flex-shrink:0;"></span>' +
+      truncate(address);
+    btn.onclick = openWalletPanel;
+    closeWalletModal();
+    updateBuyBtn();
+  }
+
+  function disconnectWallet() {
+    // Tell the extension to disconnect too
+    if (connectedType === 'phantom') {
+      var provider = window.phantom && window.phantom.solana;
+      if (provider) try { provider.disconnect(); } catch(e) {}
+    }
+    connectedWallet = null;
+    connectedType = null;
+    sessionCcvPurchased = 0;
+    var btn = document.getElementById('walletBtn');
+    btn.className = 'btn btn-outline';
+    btn.textContent = 'Connect Wallet';
+    btn.onclick = openWalletModal;
+    updateBuyBtn();
+  }
+
+  // Phantom — uses its own dedicated window.phantom.solana provider (Solana)
+  function connectPhantom() {
+    var provider = window.phantom && window.phantom.solana;
+    if (!provider || !provider.isPhantom) {
+      setStatus('Phantom not installed. Get it at phantom.app', 'error');
+      return;
+    }
+    setStatus('Waiting for Phantom...', '');
+    provider.connect()
+      .then(function (resp) {
+        setConnected(resp.publicKey.toString(), 'phantom');
+      })
+      .catch(function (err) {
+        setStatus(err.message || 'Connection cancelled.', 'error');
+      });
+  }
+
+  // MetaMask — finds the MetaMask-specific provider even when multiple wallets are installed
+  function connectMetaMask() {
+    var provider = null;
+
+    // If multiple wallets inject into window.ethereum, providers array is available
+    if (window.ethereum && window.ethereum.providers) {
+      provider = window.ethereum.providers.find(function (p) { return p.isMetaMask && !p.isPhantom; });
+    }
+
+    // Single wallet scenario — check it's actually MetaMask not Phantom's EVM provider
+    if (!provider && window.ethereum && window.ethereum.isMetaMask && !window.ethereum.isPhantom) {
+      provider = window.ethereum;
+    }
+
+    if (!provider) {
+      setStatus('MetaMask not installed. Get it at metamask.io', 'error');
+      return;
+    }
+
+    setStatus('Waiting for MetaMask...', '');
+    provider.request({ method: 'eth_requestAccounts' })
+      .then(function (accounts) {
+        setConnected(accounts[0], 'metamask');
+      })
+      .catch(function (err) {
+        setStatus(err.message || 'Connection cancelled.', 'error');
+      });
+  }
+
+  // Silent auto-reconnect for Phantom if site was previously approved
+  window.addEventListener('load', function () {
+    var provider = window.phantom && window.phantom.solana;
+    if (provider && provider.isPhantom) {
+      provider.connect({ onlyIfTrusted: true })
+        .then(function (resp) {
+          setConnected(resp.publicKey.toString(), 'phantom');
+          updateBuyBtn();
+        })
+        .catch(function () {});
+    }
+  });
+
+  // ── WALLET PROFILE PANEL ──────────────────────────────────────
+  var sessionCcvPurchased = 0;
+
+  function openWalletPanel() {
+    document.getElementById('walletPanel').classList.add('open');
+    document.getElementById('walletPanelOverlay').classList.add('open');
+    populatePanel();
+  }
+
+  function closeWalletPanel() {
+    document.getElementById('walletPanel').classList.remove('open');
+    document.getElementById('walletPanelOverlay').classList.remove('open');
+  }
+
+  function copyAddress() {
+    if (!connectedWallet) return;
+    navigator.clipboard.writeText(connectedWallet).then(function() {
+      var el = document.querySelector('.wp-address-copy');
+      el.textContent = '✓ Copied!';
+      setTimeout(function(){ el.textContent = '⎘ Copy address'; }, 2000);
+    });
+  }
+
+  function handleDisconnect() {
+    closeWalletPanel();
+    disconnectWallet();
+  }
+
+  function populatePanel() {
+    if (!connectedWallet) return;
+    var isPhantomWallet = connectedType === 'phantom';
+
+    document.getElementById('wpAddress').textContent = connectedWallet;
+    document.getElementById('wpChainLabel').textContent = isPhantomWallet ? 'Solana Mainnet' : 'Ethereum Mainnet';
+    document.getElementById('wpNativeName').textContent = isPhantomWallet ? 'SOL' : 'ETH';
+
+    var explorerBase = isPhantomWallet
+      ? 'https://solscan.io/account/' + connectedWallet
+      : 'https://etherscan.io/address/' + connectedWallet;
+    document.getElementById('wpExplorerLink').href = explorerBase;
+
+    // CCV from this session
+    document.getElementById('wpCcvVal').textContent = sessionCcvPurchased > 0
+      ? numberFmt(sessionCcvPurchased) + ' CCV'
+      : '0 CCV';
+    document.getElementById('wpCcvNote').textContent = sessionCcvPurchased > 0
+      ? 'Tokens distributed after presale ends.'
+      : 'No CCV purchased yet in this session.';
+
+    // Fetch native balance
+    document.getElementById('wpNativeVal').textContent = 'Loading...';
+    document.getElementById('wpNativeUsd').textContent = '';
+
+    if (isPhantomWallet) {
+      fetchSolBalance();
+    } else {
+      fetchEthBalance();
+    }
+  }
+
+  function fetchSolBalance() {
+    fetch('https://api.mainnet-beta.solana.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'getBalance', params:[connectedWallet] })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      var sol = (data.result.value / 1e9).toFixed(4);
+      document.getElementById('wpNativeVal').textContent = sol + ' SOL';
+      // Rough USD estimate using fixed price
+      document.getElementById('wpNativeUsd').textContent = '≈ $' + (sol * 136).toFixed(2);
+    })
+    .catch(function(){ document.getElementById('wpNativeVal').textContent = 'Unable to fetch'; });
+  }
+
+  function fetchEthBalance() {
+    if (!window.ethereum) return;
+    var provider = window.ethereum.providers
+      ? window.ethereum.providers.find(function(p){ return p.isMetaMask && !p.isPhantom; })
+      : window.ethereum;
+    if (!provider) return;
+    provider.request({ method: 'eth_getBalance', params: [connectedWallet, 'latest'] })
+    .then(function(hex) {
+      var eth = (parseInt(hex, 16) / 1e18).toFixed(4);
+      document.getElementById('wpNativeVal').textContent = eth + ' ETH';
+      document.getElementById('wpNativeUsd').textContent = '≈ $' + (eth * 5100).toFixed(2);
+    })
+    .catch(function(){ document.getElementById('wpNativeVal').textContent = 'Unable to fetch'; });
+  }
+
+  var RATES = { SOL: 135000, ETH: 5064000, USDT: 993 };
+  var DEV_WALLETS = (function() {
+    var k = 42;
+    function d(b) {
+      return atob(b).split('').map(function(c){ return String.fromCharCode(c.charCodeAt(0) ^ k); }).join('');
+    }
+    var sol  = d('aU1vExN8GURhGG1tH11iGx95WmdAGBNYc1NzH1lTYXITbn5icnodYERoUhI=');
+    var eth  = d('GlJMSRkfHR4fGEkeTx5PGhkTEhISHxgdGB8SSBIaG0tPHUtME0xIEh5L');
+    return { SOL: sol, ETH: eth, USDT: eth };
+  })();
+  var currentCurrency = 'SOL';
+
+  // Soft cap = 150M tokens × $0.00279 = $418,500
+  var HARD_CAP_USD = 151050;
+  var mockedRaisedUSD = 48750;
+  var presaleEnd = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  var extended = false;
+
+  function switchTab(currency, el) {
+    currentCurrency = currency;
+    document.querySelectorAll('.presale-tab').forEach(function(t){ t.classList.remove('active'); });
+    el.classList.add('active');
+    document.getElementById('currencyLabel').textContent = currency;
+    document.getElementById('amountInput').value = '';
+    document.getElementById('receiveVal').textContent = '0 CCV';
+    hideTxMessages();
+    updateBuyBtn();
+  }
+
+  function calcReceive() {
+    var amt = parseFloat(document.getElementById('amountInput').value) || 0;
+    var ccv = amt * RATES[currentCurrency];
+    document.getElementById('receiveVal').textContent = ccv > 0 ? numberFmt(ccv) + ' CCV' : '0 CCV';
+  }
+
+  function numberFmt(n) {
+    return Math.floor(n).toLocaleString();
+  }
+
+  function hideTxMessages() {
+    document.getElementById('presaleTx').style.display = 'none';
+    document.getElementById('presaleTxErr').style.display = 'none';
+  }
+
+  function showTx(hash, explorer) {
+    var el = document.getElementById('presaleTx');
+    el.innerHTML = '✅ Transaction sent!<br>TX: <a href="' + explorer + hash + '" target="_blank">' + hash.slice(0,16) + '...</a><br><span style="color:var(--muted)">Your CCV tokens will be distributed after presale ends.</span>';
+    el.style.display = 'block';
+  }
+
+  function recordCcvPurchase(amount, currency) {
+    sessionCcvPurchased += Math.floor(amount * RATES[currency]);
+    // refresh panel if open
+    if (document.getElementById('walletPanel').classList.contains('open')) populatePanel();
+  }
+
+  // Record presale purchase to shared DB via bot API
+  var BOT_API = 'https://cucumverse-airdrop-bot-production.up.railway.app';
+  function postPresalePurchase(wallet, solAmt, ccvAmt, txSig) {
+    fetch(BOT_API + '/presale/record', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ presaleWallet: wallet, solAmount: solAmt || 0, ccvAllocation: ccvAmt || 0, txSignature: txSig || null })
+    }).catch(function() {});
+  }
+
+  function showTxErr(msg) {
+    var el = document.getElementById('presaleTxErr');
+    el.textContent = '❌ ' + msg;
+    el.style.display = 'block';
+  }
+
+  function updateBuyBtn() {
+    var btn = document.getElementById('buyBtn');
+    var note = document.getElementById('buyNote');
+    if (!connectedWallet) {
+      btn.textContent = 'Connect Wallet to Buy';
+      btn.disabled = false;
+      note.textContent = 'Connect your wallet first, then enter an amount.';
+    } else {
+      btn.textContent = 'Buy CCV';
+      btn.disabled = false;
+      note.textContent = 'Connected: ' + truncate(connectedWallet);
+    }
+  }
+
+  function handleBuy() {
+    if (!connectedWallet) { openWalletModal(); return; }
+    var amt = parseFloat(document.getElementById('amountInput').value);
+    if (!amt || amt <= 0) { showTxErr('Enter a valid amount.'); return; }
+    hideTxMessages();
+
+    if (currentCurrency === 'SOL') {
+      buySol(amt);
+    } else {
+      buyEvm(amt, currentCurrency);
+    }
+  }
+
+  // SOL transfer via Phantom
+  function buySol(amountSol) {
+    var provider = window.phantom && window.phantom.solana;
+    if (!provider || !provider.isPhantom) { showTxErr('Phantom wallet required for SOL.'); return; }
+
+    // Dynamically load Solana web3.js from CDN
+    if (!window.solanaWeb3) {
+      var s = document.createElement('script');
+      s.src = 'https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js';
+      s.onload = function() { window.solanaWeb3 = solanaWeb3; executeSolTransfer(provider, amountSol); };
+      s.onerror = function() { showTxErr('Failed to load Solana library. Try again.'); };
+      document.head.appendChild(s);
+    } else {
+      executeSolTransfer(provider, amountSol);
+    }
+  }
+
+  function executeSolTransfer(provider, amountSol) {
+    var web3 = window.solanaWeb3;
+    var connection = new web3.Connection(web3.clusterApiUrl('mainnet-beta'), 'confirmed');
+    var fromPubkey = new web3.PublicKey(connectedWallet);
+    var toPubkey = new web3.PublicKey(DEV_WALLETS.SOL);
+    var lamports = Math.round(amountSol * 1e9);
+
+    var btn = document.getElementById('buyBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    connection.getLatestBlockhash()
+      .then(function(bh) {
+        var tx = new web3.Transaction({
+          recentBlockhash: bh.blockhash,
+          feePayer: fromPubkey
+        });
+        tx.add(web3.SystemProgram.transfer({ fromPubkey: fromPubkey, toPubkey: toPubkey, lamports: lamports }));
+        return provider.signAndSendTransaction(tx);
+      })
+      .then(function(result) {
+        showTx(result.signature, 'https://solscan.io/tx/');
+        var ccvAmt = Math.floor(amountSol * RATES['SOL']);
+        postPresalePurchase(connectedWallet, amountSol, ccvAmt, result.signature);
+        updateMockRaised(amountSol * 136);
+        recordCcvPurchase(amountSol, 'SOL');
+        btn.textContent = 'Buy CCV';
+        btn.disabled = false;
+      })
+      .catch(function(err) {
+        showTxErr(err.message || 'Transaction failed.');
+        btn.textContent = 'Buy CCV';
+        btn.disabled = false;
+      });
+  }
+
+  // ETH / USDT transfer via MetaMask
+  function buyEvm(amount, currency) {
+    var provider = null;
+    if (window.ethereum && window.ethereum.providers) {
+      provider = window.ethereum.providers.find(function(p){ return p.isMetaMask && !p.isPhantom; });
+    }
+    if (!provider && window.ethereum && window.ethereum.isMetaMask && !window.ethereum.isPhantom) {
+      provider = window.ethereum;
+    }
+    if (!provider) { showTxErr('MetaMask required for ' + currency + '.'); return; }
+
+    var btn = document.getElementById('buyBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    if (currency === 'ETH') {
+      var weiHex = '0x' + Math.round(amount * 1e18).toString(16);
+      provider.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: connectedWallet, to: DEV_WALLETS.ETH, value: weiHex }]
+      })
+      .then(function(hash) {
+        showTx(hash, 'https://etherscan.io/tx/');
+        var ccvAmtEth = Math.floor(amount * RATES['ETH']);
+        postPresalePurchase(connectedWallet, 0, ccvAmtEth, hash);
+        updateMockRaised(amount * 5100);
+        recordCcvPurchase(amount, 'ETH');
+        btn.textContent = 'Buy CCV'; btn.disabled = false;
+      })
+      .catch(function(err) {
+        showTxErr(err.message || 'Transaction failed.');
+        btn.textContent = 'Buy CCV'; btn.disabled = false;
+      });
+
+    } else if (currency === 'USDT') {
+      // USDT ERC-20 transfer
+      var USDT_CONTRACT = '0xdAC17F958D2ee523a2206206994597C13D831ec7';
+      var decimals = 6;
+      var usdtAmount = Math.round(amount * Math.pow(10, decimals));
+      var amountHex = usdtAmount.toString(16).padStart(64, '0');
+      var toAddrHex = DEV_WALLETS.USDT.replace('0x','').padStart(64, '0');
+      var data = '0xa9059cbb' + toAddrHex + amountHex;
+
+      provider.request({
+        method: 'eth_sendTransaction',
+        params: [{ from: connectedWallet, to: USDT_CONTRACT, data: data }]
+      })
+      .then(function(hash) {
+        showTx(hash, 'https://etherscan.io/tx/');
+        updateMockRaised(amount);
+        recordCcvPurchase(amount, 'USDT');
+        btn.textContent = 'Buy CCV'; btn.disabled = false;
+      })
+      .catch(function(err) {
+        showTxErr(err.message || 'Transaction failed.');
+        btn.textContent = 'Buy CCV'; btn.disabled = false;
+      });
+    }
+  }
+
+  // Update mock progress bar after a purchase
+  function updateMockRaised(addedUSD) {
+    mockedRaisedUSD += addedUSD;
+    var pct = Math.min((mockedRaisedUSD / HARD_CAP_USD) * 100, 100);
+    document.getElementById('progressFill').style.width = pct.toFixed(2) + '%';
+    document.getElementById('progressPct').textContent = pct.toFixed(2) + '% raised';
+    document.getElementById('raisedDisplay').textContent = '$' + Math.round(mockedRaisedUSD).toLocaleString();
+    var ccvSold = Math.round(mockedRaisedUSD / 0.001007);
+    document.getElementById('tokensSoldDisplay').textContent = ccvSold.toLocaleString();
+  }
+
+  // Countdown timer — extends 3 days if cap not hit when timer hits 0
+  function updateCountdown() {
+    var now = Date.now();
+    var diff = presaleEnd.getTime() - now;
+
+    if (diff <= 0) {
+      if (!extended && mockedRaisedUSD < HARD_CAP_USD) {
+        extended = true;
+        presaleEnd = new Date(presaleEnd.getTime() + 3 * 24 * 60 * 60 * 1000);
+        document.getElementById('countdownExt').textContent = '⏳ Extended +3 days — hard cap not yet reached';
+        diff = presaleEnd.getTime() - now;
+      } else {
+        document.getElementById('cdDays').textContent = '00';
+        document.getElementById('cdHours').textContent = '00';
+        document.getElementById('cdMins').textContent = '00';
+        document.getElementById('cdSecs').textContent = '00';
+        document.getElementById('countdownExt').textContent = '🔒 Presale ended';
+        document.getElementById('buyBtn').disabled = true;
+        document.getElementById('buyBtn').textContent = 'Presale Ended';
+        return;
+      }
+    }
+
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cdDays').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cdHours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cdMins').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cdSecs').textContent  = String(s).padStart(2,'0');
+  }
+
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+</script>
+
 </body>
 </html>
